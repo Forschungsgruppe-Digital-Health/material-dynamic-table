@@ -4,11 +4,24 @@ import { ColumnConfig, ControlsPosition, DynamicTableComponent } from 'material-
 import { Product } from './product';
 import { TextFilter } from './filters/text-filter/text-filter.model';
 import { DateFilter } from './filters/date-filter/date-filter.model';
+import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
+import { DynamicTableControlsIntl } from 'material-dynamic-table';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 @Component({
   selector: 'ld-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [
+    {
+      provide: MatPaginatorIntl,
+      useClass: GermanDynamicTableControlsIntl
+    },
+    {
+      provide: DynamicTableControlsIntl,
+      useClass: GermanDynamicTableControlsIntl
+    }
+  ]
 })
 export class AppComponent {
 

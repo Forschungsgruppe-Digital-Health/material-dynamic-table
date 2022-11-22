@@ -10,16 +10,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule } from '@angular/material/paginator';
-
-import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
-
-import { TextFilterComponent } from './filters/text-filter/text-filter.component';
-import { DateFilterComponent } from './filters/date-filter/date-filter.component';
-
-import { CellService, ColumnFilterService, DynamicTableModule } from 'material-dynamic-table';
+import { MatPaginatorModule} from '@angular/material/paginator';
 
 import { AppComponent } from './app.component';
+import { CellService, ColumnFilterService, DynamicTableModule } from 'material-dynamic-table';
+import { DateFilterComponent } from './filters/date-filter/date-filter.component';
+import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
+import { TextFilterComponent } from './filters/text-filter/text-filter.component';
 
 @NgModule({
   declarations: [
@@ -43,17 +40,15 @@ import { AppComponent } from './app.component';
     MatPaginatorModule
   ],
   entryComponents: [
-    OptionsCellComponent,  
+    OptionsCellComponent,
     TextFilterComponent,
     DateFilterComponent
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(private readonly cellService: CellService, private readonly columnFilterService: ColumnFilterService) {
     cellService.registerCell('options', OptionsCellComponent);
-
     columnFilterService.registerFilter('string', TextFilterComponent);
     columnFilterService.registerFilter('date', DateFilterComponent);
   }

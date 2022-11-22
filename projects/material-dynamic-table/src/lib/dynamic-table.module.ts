@@ -3,28 +3,27 @@ import { CommonModule } from '@angular/common';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicTableComponent } from './dynamic-table.component';
-import { TableCellComponent } from './table-cell/table-cell.component';
-
-import { CellService } from './table-cell/cell-types/cell.service';
-import { CellDirective } from './table-cell/cell.directive';
-import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
-
-export { CellService, CellDirective, ColumnFilterService };
 export { CellComponent } from './table-cell/cell-types/cell.component';
-export { ColumnFilter } from './column-filter.model';
+export { CellService, CellDirective, ColumnFilterService };
 export { ColumnConfig } from './column-config.model';
+export { ColumnFilter } from './column-filter.model';
 export { ControlsPosition } from './controls-position.model';
+export { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
 export { FilterDescription } from './filter-description';
-
-import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
+import { CellDirective } from './table-cell/cell.directive';
+import { CellService } from './table-cell/cell-types/cell.service';
+import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
 import { DateCellComponent } from './table-cell/cell-types/date-cell.component';
+import { DynamicTableComponent } from './dynamic-table.component';
+import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
+import { TableCellComponent } from './table-cell/table-cell.component';
+import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
 
 @NgModule({
   imports: [
@@ -51,7 +50,17 @@ import { DateCellComponent } from './table-cell/cell-types/date-cell.component';
   ],
   providers: [
     CellService,
-    ColumnFilterService
+    ColumnFilterService,
+    {
+      provide: MatPaginatorIntl,
+      useClass: DynamicTableControlsIntl,
+
+    },
+    {
+      provide: DynamicTableControlsIntl,
+      useClass: DynamicTableControlsIntl,
+
+    }
   ]
 })
 export class DynamicTableModule {

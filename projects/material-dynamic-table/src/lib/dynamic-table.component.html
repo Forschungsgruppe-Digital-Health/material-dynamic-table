@@ -33,7 +33,7 @@
   <div class="mdt-controls-container" [hidden]="!isUsingInternalPaginator()">
     <div class="mdt-control">
       <button mat-icon-button
-              matTooltip="{{resetFiltersLabel}}"
+              matTooltip="{{dynamicTableControlsIntl.resetFilterLabel}}"
               (click)="clearFilters()">
         <mat-icon color="{{hasSetFilter() ? 'primary' : 'default'}}">
           filter_list_off

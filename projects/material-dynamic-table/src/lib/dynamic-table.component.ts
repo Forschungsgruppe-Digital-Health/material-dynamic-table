@@ -8,6 +8,7 @@ import {ColumnConfig} from './column-config.model';
 import {ColumnFilter} from './column-filter.model';
 import {ControlsPosition} from './controls-position.model';
 import {ColumnFilterService} from './table-cell/cell-types/column-filter.service';
+import {DynamicTableControlsIntl} from './dynamic-table-controls-intl';
 
 @Component({
   selector: 'mdt-dynamic-table',
@@ -36,15 +37,14 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     top: ControlsPosition.TOP
   };
 
-  resetFiltersLabel = 'Reset filters';
-
   displayedColumns: string[];
 
   private appliedFilters: { [key: string]: any; } = {};
 
   constructor(
     private readonly columnFilterService: ColumnFilterService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    readonly dynamicTableControlsIntl: DynamicTableControlsIntl
   ) {}
 
   ngOnInit() {
