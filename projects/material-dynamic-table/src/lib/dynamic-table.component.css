@@ -2,11 +2,28 @@ table {
     width: 100%;
 }
 
-th .mat-icon.mat-default {
+.mdt-controls-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.mdt-control {
+  padding: 0 12px;
+}
+
+.mdt-controls-container {
+  height: auto;
+}
+
+th .mat-icon.mat-default,
+.mdt-controls-container .mdt-control .mat-icon-button .mat-icon.mat-default {
     opacity: 0.54;
 }
 
-th .mat-icon.mat-default:hover {
+th .mat-icon.mat-default:hover,
+.mdt-controls-container .mdt-control .mat-icon-button .mat-icon.mat-default:hover {
     opacity: 1;
 }
 

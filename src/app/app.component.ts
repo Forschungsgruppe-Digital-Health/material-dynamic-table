@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { FilteredDataSource } from './data-source/filtered-data-source';
-import { ColumnConfig, DynamicTableComponent } from 'material-dynamic-table';
+import { ColumnConfig, ControlsPosition, DynamicTableComponent } from 'material-dynamic-table';
 import { Product } from './product';
 import { TextFilter } from './filters/text-filter/text-filter.model';
 import { DateFilter } from './filters/date-filter/date-filter.model';
@@ -12,12 +11,11 @@ import { DateFilter } from './filters/date-filter/date-filter.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  @ViewChild(DynamicTableComponent) dynamicTable: DynamicTableComponent;
+
   title = 'material-dynamic-table-demo';
-
-  @ViewChild(DynamicTableComponent, { static: true }) dynamicTable: DynamicTableComponent;
-
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-
+  controlsPosition = ControlsPosition.BOTTOM;
   columns: ColumnConfig[] = [
     {
       name: 'product',
@@ -105,7 +103,7 @@ export class AppComponent {
 
   dataSource = new FilteredDataSource<Product>(this.data);
 
-  clearFilters() {    
+  clearFilters() {
     this.dynamicTable.clearFilters();
   }
 
@@ -117,13 +115,13 @@ export class AppComponent {
       filter.fromDate = new Date(2015, 1, 1);
       filter.toDate = new Date(2015, 12, 31);
 
-      this.dynamicTable.setFilter(createdColumnName, filter);      
+      this.dynamicTable.setFilter(createdColumnName, filter);
     } else {
       const columnName = 'description';
       const filter = new TextFilter(columnName);
       filter.value = 'Loud';
 
-      this.dynamicTable.setFilter(columnName, filter);      
+      this.dynamicTable.setFilter(columnName, filter);
     }
   }
 

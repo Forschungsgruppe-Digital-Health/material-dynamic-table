@@ -1,38 +1,51 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {MatSort} from '@angular/material/sort';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
-import { DataSource } from '@angular/cdk/table';
-import { ColumnConfig } from './column-config.model';
-import { ColumnFilter } from './column-filter.model';
-import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
+import {DataSource} from '@angular/cdk/table';
+import {ColumnConfig} from './column-config.model';
+import {ColumnFilter} from './column-filter.model';
+import {ControlsPosition} from './controls-position.model';
+import {ColumnFilterService} from './table-cell/cell-types/column-filter.service';
 
 @Component({
   selector: 'mdt-dynamic-table',
   templateUrl: './dynamic-table.component.html',
   styleUrls: ['./dynamic-table.component.css']
 })
-export class DynamicTableComponent implements OnInit {
+export class DynamicTableComponent implements OnInit, AfterViewInit {
 
   @Input() columns: ColumnConfig[];
   @Input() dataSource: DataSource<any>;
   @Input() pageSize = 20;
   @Input() pageSizeOptions = [20, 50, 100];
+  @Input() showFirstLastButton = false;
   @Input() showFilters = true;
   @Input() stickyHeader = false;
   @Input() paginator: MatPaginator;
+  @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
 
   @Output() rowClick = new EventEmitter<any>();
 
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) private _internalPaginator: MatPaginator;
+
+  controlsPositions = {
+    bottom: ControlsPosition.BOTTOM,
+    top: ControlsPosition.TOP
+  };
+
+  resetFiltersLabel = 'Reset filters';
+
   displayedColumns: string[];
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: true }) private internalPaginator: MatPaginator;
+  private appliedFilters: { [key: string]: any; } = {};
 
-  private appliedFilters: { [key: string]: any; } = {}; 
-
-  constructor(private readonly columnFilterService: ColumnFilterService, private readonly dialog: MatDialog) { }
+  constructor(
+    private readonly columnFilterService: ColumnFilterService,
+    private readonly dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     if (this.dataSource == null) {
@@ -42,12 +55,14 @@ export class DynamicTableComponent implements OnInit {
       throw Error('DynamicTable must be provided with column definitions.');
     }
 
-    if (this.paginator === undefined) {
-      this.paginator = this.internalPaginator;
-    }
-
     this.columns.forEach((column, index) => column.name = this.prepareColumnName(column.name, index));
     this.displayedColumns = this.columns.map((column, index) => column.name);
+  }
+
+  ngAfterViewInit() {
+    if (this.paginator === undefined) {
+      this.paginator = this._internalPaginator;
+    }
 
     const dataSource = this.dataSource as any;
     dataSource.sort = this.sort;
@@ -55,13 +70,15 @@ export class DynamicTableComponent implements OnInit {
   }
 
   isUsingInternalPaginator() {
-    return this.paginator === this.internalPaginator;
+    return this.paginator === this._internalPaginator;
+  }
+
+  hasSetFilter() {
+    return this.appliedFilters && (Object.keys(this.appliedFilters).length > 0);
   }
 
   canFilter(column: ColumnConfig) {
-    const filter = this.columnFilterService.getFilter(column.type);
-
-    return filter != null;
+    return this.columnFilterService.getFilter(column.type) != null;
   }
 
   isFiltered(column: ColumnConfig) {
@@ -123,8 +140,7 @@ export class DynamicTableComponent implements OnInit {
 
   getFilters() {
     const filters = this.appliedFilters;
-    const filterArray = Object.keys(filters).map((key) => filters[key]);
-    return filterArray;
+    return Object.keys(filters).map((key) => filters[key]);
   }
 
   getFilter(columnName: string): any {

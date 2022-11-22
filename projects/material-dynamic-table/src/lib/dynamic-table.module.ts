@@ -7,6 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicTableComponent } from './dynamic-table.component';
 import { TableCellComponent } from './table-cell/table-cell.component';
@@ -19,6 +20,7 @@ export { CellService, CellDirective, ColumnFilterService };
 export { CellComponent } from './table-cell/cell-types/cell.component';
 export { ColumnFilter } from './column-filter.model';
 export { ColumnConfig } from './column-config.model';
+export { ControlsPosition } from './controls-position.model';
 export { FilterDescription } from './filter-description';
 
 import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
@@ -26,13 +28,14 @@ import { DateCellComponent } from './table-cell/cell-types/date-cell.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTooltipModule
+      CommonModule,
+      MatTableModule,
+      MatSortModule,
+      MatPaginatorModule,
+      MatIconModule,
+      MatDialogModule,
+      MatTooltipModule,
+      MatButtonModule
   ],
   declarations: [
     DynamicTableComponent,
