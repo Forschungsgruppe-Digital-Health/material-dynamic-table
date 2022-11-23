@@ -13,9 +13,11 @@
         mat-sort-header="{{ column.name }}"
         [disabled]="column.sort === false">
       {{ column.displayName }}
-      <button class="mat-sort-header-button" *ngIf="showFilters && canFilter(column)"
+      <button mat-icon-button
+              *ngIf="showFilters && canFilter(column)"
               (click)="filter(column); $event.stopPropagation();"
-              matTooltip="{{ getFilterDescription(column) }}" matTooltipDisabled="{{ !getFilterDescription(column) }}">
+              matTooltip="{{ getFilterDescription(column) }}"
+              matTooltipDisabled="{{ !getFilterDescription(column) }}">
         <mat-icon color="{{ isFiltered(column) ? 'primary' : 'default' }}">filter_list</mat-icon>
       </button>
     </th>
