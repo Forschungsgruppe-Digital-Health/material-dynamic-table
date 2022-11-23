@@ -9,6 +9,8 @@ import {ColumnFilter} from './column-filter.model';
 import {ControlsPosition} from './controls-position.model';
 import {ColumnFilterService} from './table-cell/cell-types/column-filter.service';
 import {DynamicTableControlsIntl} from './dynamic-table-controls-intl';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {Observable, of, Subject} from 'rxjs';
 
 @Component({
   selector: 'mdt-dynamic-table',
@@ -17,7 +19,8 @@ import {DynamicTableControlsIntl} from './dynamic-table-controls-intl';
 })
 export class DynamicTableComponent implements OnInit, AfterViewInit {
 
-  @Input() columns: ColumnConfig[];
+  @Input() columns: ColumnConfig[] | Observable<ColumnConfig[]>;
+  @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
   @Input() dataSource: DataSource<any>;
   @Input() pageSize = 20;
   @Input() pageSizeOptions = [20, 50, 100];
@@ -25,9 +28,9 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   @Input() showFilters = true;
   @Input() stickyHeader = false;
   @Input() paginator: MatPaginator;
-  @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
 
   @Output() rowClick = new EventEmitter<any>();
+  @Output() breakpointChanges: Observable<{ name: string, mediaQuery: string}[]>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) private _internalPaginator: MatPaginator;
@@ -36,27 +39,74 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     bottom: ControlsPosition.BOTTOM,
     top: ControlsPosition.TOP
   };
-
+  preparedColumns: ColumnConfig[];
   displayedColumns: string[];
 
-  private appliedFilters: { [key: string]: any; } = {};
+  private _appliedFilters: { [key: string]: any; };
+  private _breakpointChangesSubject: Subject<{ name: string, mediaQuery: string }[]>;
 
   constructor(
+    private readonly breakpointObserver: BreakpointObserver,
     private readonly columnFilterService: ColumnFilterService,
     private readonly dialog: MatDialog,
     readonly dynamicTableControlsIntl: DynamicTableControlsIntl
-  ) {}
+  ) {
+    this._appliedFilters = {};
+    this._breakpointChangesSubject = new Subject<{ name: string, mediaQuery: string }[]>();
+    this.breakpointChanges = this._breakpointChangesSubject.asObservable();
+  }
 
   ngOnInit() {
     if (this.dataSource == null) {
       throw Error('DynamicTable must be provided with data source.');
     }
+
     if (this.columns == null) {
       throw Error('DynamicTable must be provided with column definitions.');
     }
 
-    this.columns.forEach((column, index) => column.name = this.prepareColumnName(column.name, index));
-    this.displayedColumns = this.columns.map((column, index) => column.name);
+    if (this.columns instanceof Array) {
+      this.columns = of(this.columns);
+    }
+
+    this.columns.subscribe(columns => {
+      this.preparedColumns = columns
+        // Assign index based column name if non is given
+        .map((column, index) => {
+          column.name = column.name || 'col' + index;
+          return column;
+        });
+
+      // Set column to display
+      this.displayedColumns = this.preparedColumns.map((column, index) => column.name);
+
+      // Conditionally reset filters
+      if (this.hasSetFilter()) {
+        this.clearFilters();
+      }
+    });
+
+    this.breakpointObserver
+      // Register media queries for all available breakpoints
+      .observe(Object.keys(Breakpoints).map(name => Breakpoints[name]))
+      // Subscribe to breakpoint changes regarding all available breakpoints
+      .subscribe(breakpointState => this._breakpointChangesSubject.next(
+          Object.keys(breakpointState.breakpoints)
+          // Filter actual breakpoint changes (set to value 'true')
+          .filter(mediaQuery => breakpointState.breakpoints[mediaQuery])
+          // Determine breakpoint name and create object of name and media query as change
+          .map(mediaQuery => {
+            const name = Object.keys(Breakpoints).find(b => Breakpoints[b] === mediaQuery);
+            if (name) {
+              return {
+                name: name,
+                mediaQuery: Breakpoints[name]
+              };
+            }
+
+            throw Error(`Processing breakpoint changes with media query '${mediaQuery}' fails using breakpoint name ${name}`);
+          })
+      ))  ;
   }
 
   ngAfterViewInit() {
@@ -74,7 +124,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   }
 
   hasSetFilter() {
-    return this.appliedFilters && (Object.keys(this.appliedFilters).length > 0);
+    return this._appliedFilters && (Object.keys(this._appliedFilters).length > 0);
   }
 
   canFilter(column: ColumnConfig) {
@@ -82,20 +132,16 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   }
 
   isFiltered(column: ColumnConfig) {
-    return this.appliedFilters[column.name];
+    return this._appliedFilters[column.name];
   }
 
   getFilterDescription(column: ColumnConfig) {
-    const filter = this.appliedFilters[column.name];
+    const filter = this._appliedFilters[column.name];
     if (!filter || !filter.getDescription) {
       return null;
     }
 
     return filter.getDescription();
-  }
-
-  prepareColumnName(name: string | undefined, columnNumber: number) {
-    return name || 'col' + columnNumber;
   }
 
   filter(column: ColumnConfig) {
@@ -106,8 +152,8 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
       const columnFilter = new ColumnFilter();
       columnFilter.column = column;
 
-      if (this.appliedFilters[column.name]) {
-        columnFilter.filter = Object.create(this.appliedFilters[column.name]);
+      if (this._appliedFilters[column.name]) {
+        columnFilter.filter = Object.create(this._appliedFilters[column.name]);
       }
 
       dialogConfig.data = columnFilter;
@@ -116,9 +162,9 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.appliedFilters[column.name] = result;
+          this._appliedFilters[column.name] = result;
         } else if (result === '') {
-          delete this.appliedFilters[column.name];
+          delete this._appliedFilters[column.name];
         }
 
         if (result || result === '') {
@@ -129,7 +175,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   }
 
   clearFilters() {
-    this.appliedFilters = {};
+    this._appliedFilters = {};
     this.updateDataSource();
   }
 
@@ -139,7 +185,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   }
 
   getFilters() {
-    const filters = this.appliedFilters;
+    const filters = this._appliedFilters;
     return Object.keys(filters).map((key) => filters[key]);
   }
 
@@ -150,7 +196,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
       throw Error(`Column with name '${columnName}' does not exist.`);
     }
 
-    return this.appliedFilters[filterColumn.name];
+    return this._appliedFilters[filterColumn.name];
   }
 
   setFilter(columnName: string, filter: any) {
@@ -160,12 +206,12 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
       throw Error(`Cannot set filter for a column. Column with name '${columnName}' does not exist.`);
     }
 
-    this.appliedFilters[filterColumn.name] = filter;
+    this._appliedFilters[filterColumn.name] = filter;
     this.updateDataSource();
   }
 
   private getColumnByName(columnName: string): ColumnConfig | undefined {
-    return this.columns.find(c =>
+    return this.preparedColumns.find(c =>
       (c.name ? c.name.toLowerCase() : c.name) === (columnName ? columnName.toLowerCase() : columnName)
     );
   }

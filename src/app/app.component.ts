@@ -1,12 +1,69 @@
-import { Component, ViewChild } from '@angular/core';
-import { FilteredDataSource } from './data-source/filtered-data-source';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Breakpoints } from '@angular/cdk/layout';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
 import { ColumnConfig, ControlsPosition, DynamicTableComponent } from 'material-dynamic-table';
+import { DateFilter } from './filters/date-filter/date-filter.model';
+import { DynamicTableControlsIntl } from 'material-dynamic-table';
+import { FilteredDataSource } from './data-source/filtered-data-source';
+import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
 import { Product } from './product';
 import { TextFilter } from './filters/text-filter/text-filter.model';
-import { DateFilter } from './filters/date-filter/date-filter.model';
-import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
-import { DynamicTableControlsIntl } from 'material-dynamic-table';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import {BehaviorSubject} from 'rxjs';
+
+const smallerDeviceColumnConfig: ColumnConfig[] = [
+  {
+    name: 'product',
+    displayName: 'Product',
+    type: 'string',
+    sticky: 'start'
+  },
+  {
+    name: 'recievedOn',
+    displayName: 'Recieved On',
+    type: 'date'
+  },
+  {
+    name: '',
+    type: 'options',
+    sticky: 'end',
+    sort: false
+  }
+];
+
+const largerDeviceColumnConfig: ColumnConfig[] = [
+  {
+    name: 'product',
+    displayName: 'Product',
+    type: 'string',
+    sticky: 'start'
+  },
+  {
+    name: 'description',
+    displayName: 'Description',
+    type: 'string',
+    sort: false
+  },
+  {
+    name: 'recievedOn',
+    displayName: 'Recieved On',
+    type: 'date'
+  },
+  {
+    name: 'created',
+    displayName: 'Created Date',
+    type: 'date',
+    options: {
+      dateFormat: 'shortDate'
+    }
+  },
+  {
+    name: '',
+    type: 'options',
+    sticky: 'end',
+    sort: false
+  }
+];
 
 @Component({
   selector: 'ld-root',
@@ -23,45 +80,13 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
     }
   ]
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
 
   @ViewChild(DynamicTableComponent) dynamicTable: DynamicTableComponent;
 
   title = 'material-dynamic-table-demo';
   controlsPosition = ControlsPosition.BOTTOM;
-  columns: ColumnConfig[] = [
-    {
-      name: 'product',
-      displayName: 'Product',
-      type: 'string',
-      sticky: 'start'
-    },
-    {
-      name: 'description',
-      displayName: 'Description',
-      type: 'string',
-      sort: false
-    },
-    {
-      name: 'recievedOn',
-      displayName: 'Recieved On',
-      type: 'date'
-    },
-    {
-      name: 'created',
-      displayName: 'Created Date',
-      type: 'date',
-      options: {
-        dateFormat: 'shortDate'
-      }
-    },
-    {
-      name: '',
-      type: 'options',
-      sticky: 'end',
-      sort: false
-    }
-  ];
+  columns = new BehaviorSubject(largerDeviceColumnConfig);
 
   data: Product[] = [
     {
@@ -115,6 +140,22 @@ export class AppComponent {
   ];
 
   dataSource = new FilteredDataSource<Product>(this.data);
+
+  breakpointChanges: { name: string, mediaQuery: string}[];
+
+  ngAfterViewInit(): void {
+    this.dynamicTable.breakpointChanges.subscribe(breakpointChanges => {
+      this.breakpointChanges = breakpointChanges;
+
+      if (breakpointChanges.find(breakpointChange => breakpointChange.mediaQuery === Breakpoints.Small)) {
+        this.columns.next(smallerDeviceColumnConfig);
+      }
+
+      if (breakpointChanges.find(breakpointChange => breakpointChange.mediaQuery === Breakpoints.Medium)) {
+        this.columns.next(largerDeviceColumnConfig);
+      }
+    });
+  }
 
   clearFilters() {
     this.dynamicTable.clearFilters();

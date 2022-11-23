@@ -24,17 +24,19 @@ import { DynamicTableComponent } from './dynamic-table.component';
 import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
 import { TableCellComponent } from './table-cell/table-cell.component';
 import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
+import {LayoutModule} from '@angular/cdk/layout';
 
 @NgModule({
   imports: [
-      CommonModule,
-      MatTableModule,
-      MatSortModule,
-      MatPaginatorModule,
-      MatIconModule,
-      MatDialogModule,
-      MatTooltipModule,
-      MatButtonModule
+    CommonModule,
+    LayoutModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatDialogModule,
+    MatTooltipModule,
+    MatButtonModule
   ],
   declarations: [
     DynamicTableComponent,

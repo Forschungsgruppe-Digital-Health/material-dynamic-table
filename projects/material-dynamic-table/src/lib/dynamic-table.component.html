@@ -5,11 +5,13 @@
        matSort
        matSortDirection="asc"
        [dataSource]="dataSource">
-
-  <ng-container *ngFor="let column of columns" matColumnDef="{{ column.name }}"
+  <ng-container *ngFor="let column of preparedColumns"
+                [matColumnDef]="column.name"
                 [sticky]="column.sticky === 'start'"
                 [stickyEnd]="column.sticky === 'end'">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header="{{ column.name }}" [disabled]="column.sort === false">
+    <th mat-header-cell *matHeaderCellDef
+        mat-sort-header="{{ column.name }}"
+        [disabled]="column.sort === false">
       {{ column.displayName }}
       <button class="mat-sort-header-button" *ngIf="showFilters && canFilter(column)"
               (click)="filter(column); $event.stopPropagation();"
