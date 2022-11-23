@@ -7,7 +7,7 @@
   "keywords": [
     "angular",
     "angular2",
-    "angular9",
+    "angular10",
     "ng",
     "ng2",
     "dynamic",
@@ -20,8 +20,8 @@
     "type": "git"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "@angular/material": "^9.0.0"
+    "@angular/common": "^10.2.5",
+    "@angular/core": "^10.2.5",
+    "@angular/material": "^10.2.7"
   }
 }
