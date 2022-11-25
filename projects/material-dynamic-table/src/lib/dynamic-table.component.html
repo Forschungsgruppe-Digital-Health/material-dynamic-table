@@ -38,6 +38,7 @@
     <div class="mdt-control">
       <button mat-icon-button
               matTooltip="{{dynamicTableControlsIntl.resetFilterLabel}}"
+              [hidden]="!showFilters"
               (click)="clearFilters()">
         <mat-icon color="{{hasSetFilter() ? 'primary' : 'default'}}">
           filter_list_off

@@ -87,6 +87,7 @@ export class AppComponent implements AfterViewInit {
   title = 'material-dynamic-table-demo';
   controlsPosition = ControlsPosition.BOTTOM;
   columns = new BehaviorSubject(largerDeviceColumnConfig);
+  showFilters = true;
 
   data: Product[] = [
     {
@@ -181,5 +182,9 @@ export class AppComponent implements AfterViewInit {
 
   onRowClick(row: any) {
     console.log(row);
+  }
+
+  toggleShowFilters() {
+    return (this.showFilters = !this.showFilters);
   }
 }
