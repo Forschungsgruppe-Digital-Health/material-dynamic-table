@@ -3,8 +3,9 @@
 </ng-container>
 <table mat-table
        matSort
-       matSortDirection="asc"
+       matSortDirection="{{sortDirection}}"
        [dataSource]="dataSource">
+  <caption class="mdt-caption" *ngIf="caption">{{caption}}</caption>
   <ng-container *ngFor="let column of preparedColumns"
                 [matColumnDef]="column.name"
                 [sticky]="column.sticky === 'start'"

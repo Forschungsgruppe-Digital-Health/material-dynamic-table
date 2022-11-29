@@ -1,5 +1,10 @@
 table {
-    width: 100%;
+  width: 100%;
+}
+
+.mdt-caption {
+  padding: 10px;
+  caption-side: top;
 }
 
 .mdt-controls-container {
@@ -7,6 +12,7 @@ table {
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
+  background-color: #fff;
 }
 
 .mdt-control {
@@ -19,14 +25,14 @@ table {
 
 th .mat-icon.mat-default,
 .mdt-controls-container .mdt-control .mat-icon-button .mat-icon.mat-default {
-    opacity: 0.54;
+  opacity: 0.54;
 }
 
 th .mat-icon.mat-default:hover,
 .mdt-controls-container .mdt-control .mat-icon-button .mat-icon.mat-default:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 [hidden] {
-    display: none;
+  display: none;
 }

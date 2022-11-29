@@ -14,13 +14,15 @@
 </div>
 
 <div class="mat-elevation-z2 table-container">
-  <mdt-dynamic-table [columns]="columns"
+  <mdt-dynamic-table [caption]="title"
+                     [columns]="columns"
                      [controlsPosition]="controlsPosition"
                      [dataSource]="dataSource"
                      [showFirstLastButton]="true"
                      [stickyHeader]="true"
                      [pageSize]="2"
                      [pageSizeOptions]="[2, 4, 6, 8]"
+                     [sortDirection]="'desc'"
                      (rowClick)="onRowClick($event)"
                      [showFilters]="showFilters">
   </mdt-dynamic-table>

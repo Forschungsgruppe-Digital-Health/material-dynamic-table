@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, SortDirection} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
@@ -19,6 +19,7 @@ import {Observable, of, Subject} from 'rxjs';
 })
 export class DynamicTableComponent implements OnInit, AfterViewInit {
 
+  @Input() caption: string;
   @Input() columns: ColumnConfig[] | Observable<ColumnConfig[]>;
   @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
   @Input() dataSource: DataSource<any>;
@@ -26,6 +27,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   @Input() pageSizeOptions = [20, 50, 100];
   @Input() showFirstLastButton = false;
   @Input() showFilters = true;
+  @Input() sortDirection: SortDirection = 'asc';
   @Input() stickyHeader = false;
   @Input() paginator: MatPaginator;
 
