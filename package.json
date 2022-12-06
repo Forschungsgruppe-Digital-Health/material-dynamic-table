@@ -1,15 +1,16 @@
 {
   "name": "lib-demo",
-  "version": "11.1.0",
+  "version": "11.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build-ci": "npm run build-lib && ng build --source-map --base-href /material-dynamic-table/",
+    "build-lib": "ng build --prod material-dynamic-table && npm run copy",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "copy": "cp README.md dist/material-dynamic-table",
-    "build-lib": "ng build --prod material-dynamic-table && npm run copy",
     "postinstall": "ngcc"
   },
   "private": true,
