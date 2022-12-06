@@ -64,7 +64,6 @@ import {MomentCellComponent} from './table-cell/cell-types/moment-cell.component
     {
       provide: DynamicTableControlsIntl,
       useClass: DynamicTableControlsIntl,
-
     }
   ]
 })

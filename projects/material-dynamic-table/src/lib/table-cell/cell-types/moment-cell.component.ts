@@ -21,9 +21,6 @@ export class MomentCellComponent implements CellComponent, OnInit {
   }
 
   ngOnInit() {
-    // Set moment locale globally
-    moment.locale(navigator.language);
-
     // Set cell options
     const options = this.column.options;
 
@@ -39,6 +36,10 @@ export class MomentCellComponent implements CellComponent, OnInit {
   }
 
   getLocalizedMoment() {
-    return moment(this.row[this.column.name], this.sourceFormat).format(this.targetFormat);
+    return moment(
+      this.row[this.column.name],
+      this.sourceFormat,
+      moment.locale()
+    ).format(this.targetFormat);
   }
 }
