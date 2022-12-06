@@ -25,12 +25,26 @@
                      [sortDirection]="'desc'"
                      (rowClick)="onRowClick($event)"
                      [showFilters]="showFilters">
+    <ng-container *ngIf="showCustomIcons">
+      <ng-template mdtSetColumnFilterIcon>
+        <mat-icon svgIcon="custom:filter"></mat-icon>
+      </ng-template>
+      <ng-template mdtResetFilterIcon>
+        <mat-icon svgIcon="custom:hatch-filter"></mat-icon>
+      </ng-template>
+    </ng-container>
   </mdt-dynamic-table>
 </div>
 
 <div class="buttons">
-  <button mat-button (click)="clearFilters()">Clear filters</button>
-  <button mat-button (click)="setFilter()">Set filter</button>
   <button mat-button (click)="toggleShowFilters()">{{showFilters ? 'Hide' : 'Show'}} filters</button>
+  <button mat-button [disabled]="!showFilters" (click)="clearFilters()">Clear filters</button>
+  <button mat-button [disabled]="!showFilters" (click)="setFilter()">Set filter</button>
+  <button mat-button [disabled]="!showFilters" (click)="toggleIcons()">Toggle icons</button>
   <button mat-button (click)="toggleLocale()">Change moment locale (currently set to '{{locale | async}}')</button>
 </div>
+
+<div style="position: absolute; bottom: 0">
+  <em>Attribution: <a title="An icon for 'filter' from the Lines and Angles series on to [icon]. Downloaded from http://www.toicon.com/icons/lines-and-angles_filter by 127.0.0.1 on 2017-07-10. Licensed CC-BY, see http://toicon.com/license/ for details." href="http://www.toicon.com/">Shannon E Thomas/toicon.com</a></em>
+</div>
+

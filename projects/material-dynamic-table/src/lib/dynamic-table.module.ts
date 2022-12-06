@@ -20,7 +20,11 @@ import { CellDirective } from './table-cell/cell.directive';
 import { CellService } from './table-cell/cell-types/cell.service';
 import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
 import { DateCellComponent } from './table-cell/cell-types/date-cell.component';
-import { DynamicTableComponent } from './dynamic-table.component';
+import {
+  DynamicTableComponent,
+  DynamicTableResetFilterIconDirective,
+  DynamicTableSetColumnFilterIconDirective
+} from './dynamic-table.component';
 import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
 import { TableCellComponent } from './table-cell/table-cell.component';
 import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
@@ -41,13 +45,19 @@ import {MomentCellComponent} from './table-cell/cell-types/moment-cell.component
   ],
   declarations: [
     DynamicTableComponent,
+    DynamicTableResetFilterIconDirective,
+    DynamicTableSetColumnFilterIconDirective,
     TableCellComponent,
     CellDirective,
     TextCellComponent,
     DateCellComponent,
     MomentCellComponent
   ],
-  exports: [DynamicTableComponent],
+  exports: [
+    DynamicTableComponent,
+    DynamicTableResetFilterIconDirective,
+    DynamicTableSetColumnFilterIconDirective
+  ],
   entryComponents: [
     TextCellComponent,
     DateCellComponent,

@@ -10,6 +10,8 @@ import {Product} from './product';
 import {TextFilter} from './filters/text-filter/text-filter.model';
 import {BehaviorSubject} from 'rxjs';
 import * as moment from 'moment';
+import {MatIconRegistry} from '@angular/material/icon';
+import {DomSanitizer} from '@angular/platform-browser';
 
 const smallerDeviceColumnConfig: ColumnConfig[] = [
   {
@@ -96,6 +98,7 @@ export class AppComponent implements AfterViewInit {
   controlsPosition = ControlsPosition.BOTTOM;
   columns = new BehaviorSubject(largerDeviceColumnConfig);
   showFilters = true;
+  showCustomIcons = true;
 
   data: Product[] = [
     {
@@ -152,6 +155,22 @@ export class AppComponent implements AfterViewInit {
 
   breakpointChanges: { name: string, mediaQuery: string}[];
 
+  constructor(
+    private _iconRegistry: MatIconRegistry,
+    private _sanitizer: DomSanitizer
+  ) {
+    this._iconRegistry.addSvgIconInNamespace(
+      'custom',
+      'filter',
+      this._sanitizer.bypassSecurityTrustResourceUrl('assets/icons/filter.svg')
+    );
+    this._iconRegistry.addSvgIconInNamespace(
+      'custom',
+      'hatch-filter',
+      this._sanitizer.bypassSecurityTrustResourceUrl('assets/icons/hatch-filter.svg')
+    );
+  }
+
   ngAfterViewInit(): void {
     this.dynamicTable.breakpointChanges.subscribe(breakpointChanges => {
       this.breakpointChanges = breakpointChanges;
@@ -198,7 +217,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   toggleShowFilters() {
-    return (this.showFilters === !this.showFilters);
+    return (this.showFilters = !this.showFilters);
+  }
+
+  toggleIcons() {
+    return (this.showCustomIcons = !this.showCustomIcons);
   }
 
   toggleLocale() {

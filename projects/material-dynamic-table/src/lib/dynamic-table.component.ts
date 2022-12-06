@@ -1,4 +1,15 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ContentChild,
+  Directive,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {MatSort, SortDirection} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -11,6 +22,16 @@ import {ColumnFilterService} from './table-cell/cell-types/column-filter.service
 import {DynamicTableControlsIntl} from './dynamic-table-controls-intl';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Observable, of, Subject} from 'rxjs';
+
+@Directive({
+  selector: 'ng-template[mdtSetColumnFilterIcon]'
+})
+export class DynamicTableSetColumnFilterIconDirective {}
+
+@Directive({
+  selector: 'ng-template[mdtResetFilterIcon]'
+})
+export class DynamicTableResetFilterIconDirective {}
 
 @Component({
   selector: 'mdt-dynamic-table',
@@ -36,6 +57,11 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) private _internalPaginator: MatPaginator;
+
+  @ContentChild(DynamicTableResetFilterIconDirective, { read: TemplateRef })
+  customResetFilterIconTpl?: TemplateRef<any>;
+  @ContentChild(DynamicTableSetColumnFilterIconDirective, { read: TemplateRef })
+  customSetColumnFilterIconTpl?: TemplateRef<any>;
 
   controlsPositions = {
     bottom: ControlsPosition.BOTTOM,
