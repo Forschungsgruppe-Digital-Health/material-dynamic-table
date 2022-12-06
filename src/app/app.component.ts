@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { Breakpoints } from '@angular/cdk/layout';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {Breakpoints} from '@angular/cdk/layout';
+import {MatPaginatorIntl} from '@angular/material/paginator';
 
-import { ColumnConfig, ControlsPosition, DynamicTableComponent } from 'material-dynamic-table';
-import { DateFilter } from './filters/date-filter/date-filter.model';
-import { DynamicTableControlsIntl } from 'material-dynamic-table';
-import { FilteredDataSource } from './data-source/filtered-data-source';
-import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
-import { Product } from './product';
-import { TextFilter } from './filters/text-filter/text-filter.model';
+import {ColumnConfig, ControlsPosition, DynamicTableComponent, DynamicTableControlsIntl} from 'material-dynamic-table';
+import {DateFilter} from './filters/date-filter/date-filter.model';
+import {FilteredDataSource} from './data-source/filtered-data-source';
+import {GermanDynamicTableControlsIntl} from './german-dynamic-table-controls-intl';
+import {Product} from './product';
+import {TextFilter} from './filters/text-filter/text-filter.model';
 import {BehaviorSubject} from 'rxjs';
+import * as moment from 'moment';
 
 const smallerDeviceColumnConfig: ColumnConfig[] = [
   {
@@ -21,7 +21,11 @@ const smallerDeviceColumnConfig: ColumnConfig[] = [
   {
     name: 'receivedOn',
     displayName: 'Recieved On',
-    type: 'date'
+    type: 'moment',
+    options: {
+      sourceFormat: 'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      targetFormat: 'L'
+    }
   },
   {
     name: '',
@@ -47,7 +51,10 @@ const largerDeviceColumnConfig: ColumnConfig[] = [
   {
     name: 'receivedOn',
     displayName: 'Recieved On',
-    type: 'date'
+    type: 'moment',
+    options: {
+      targetFormat: 'LLLL'
+    }
   },
   {
     name: 'created',
@@ -84,6 +91,7 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild(DynamicTableComponent) dynamicTable: DynamicTableComponent;
 
+  locale = new BehaviorSubject('en');
   title = 'material-dynamic-table-demo';
   controlsPosition = ControlsPosition.BOTTOM;
   columns = new BehaviorSubject(largerDeviceColumnConfig);
@@ -155,6 +163,11 @@ export class AppComponent implements AfterViewInit {
       if (breakpointChanges.find(breakpointChange => breakpointChange.mediaQuery === Breakpoints.Medium)) {
         this.columns.next(largerDeviceColumnConfig);
       }
+      this.locale.next(moment.locale());
+    });
+
+    this.locale.subscribe(locale => {
+      moment.locale(locale);
     });
   }
 
@@ -185,6 +198,10 @@ export class AppComponent implements AfterViewInit {
   }
 
   toggleShowFilters() {
-    return (this.showFilters = !this.showFilters);
+    return (this.showFilters === !this.showFilters);
+  }
+
+  toggleLocale() {
+    this.locale.next(moment.locale() === 'en' ? 'de' : 'en');
   }
 }

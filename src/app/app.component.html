@@ -32,4 +32,5 @@
   <button mat-button (click)="clearFilters()">Clear filters</button>
   <button mat-button (click)="setFilter()">Set filter</button>
   <button mat-button (click)="toggleShowFilters()">{{showFilters ? 'Hide' : 'Show'}} filters</button>
+  <button mat-button (click)="toggleLocale()">Change moment locale (currently set to '{{locale | async}}')</button>
 </div>

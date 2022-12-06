@@ -25,6 +25,7 @@ import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
 import { TableCellComponent } from './table-cell/table-cell.component';
 import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
 import {LayoutModule} from '@angular/cdk/layout';
+import {MomentCellComponent} from './table-cell/cell-types/moment-cell.component';
 
 @NgModule({
   imports: [
@@ -43,12 +44,14 @@ import {LayoutModule} from '@angular/cdk/layout';
     TableCellComponent,
     CellDirective,
     TextCellComponent,
-    DateCellComponent
+    DateCellComponent,
+    MomentCellComponent
   ],
   exports: [DynamicTableComponent],
   entryComponents: [
     TextCellComponent,
-    DateCellComponent
+    DateCellComponent,
+    MomentCellComponent
   ],
   providers: [
     CellService,
@@ -69,5 +72,6 @@ export class DynamicTableModule {
   constructor(private readonly cellService: CellService) {
     cellService.registerCell('string', TextCellComponent);
     cellService.registerCell('date', DateCellComponent);
+    cellService.registerCell('moment', MomentCellComponent);
   }
 }

@@ -15,8 +15,8 @@ import { MatPaginatorModule} from '@angular/material/paginator';
 import { AppComponent } from './app.component';
 import { CellService, ColumnFilterService, DynamicTableModule } from 'material-dynamic-table';
 import { DateFilterComponent } from './filters/date-filter/date-filter.component';
-import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
 import { TextFilterComponent } from './filters/text-filter/text-filter.component';
+import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
 
 @NgModule({
   declarations: [
