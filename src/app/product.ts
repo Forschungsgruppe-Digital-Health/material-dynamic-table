@@ -1,6 +1,6 @@
 export class Product {
     product: string;
     description: string;
-    recievedOn: Date;
+    receivedOn: Date;
     created: Date;
 }
