@@ -1,7 +1,6 @@
 stages:
   - dependencies
   - build
-  - publish
   - deploy
 
 workflow:
@@ -48,19 +47,6 @@ build:
       - $DEMO_OUTPUT_PATH
   dependencies:
     - dependencies
-
-publish:
-  stage: publish
-  tags:
-    - shell
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - cd $DEMO_OUTPUT_PATH
-  script:
-    - docker build --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
-    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-  dependencies:
-    - build
 
 pages:
   stage: deploy
