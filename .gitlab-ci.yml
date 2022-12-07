@@ -10,7 +10,6 @@ workflow:
 
 variables:
   PROJECT_PATH: "$CI_PROJECT_DIR"
-  OUTPUT_PATH: "$CI_PROJECT_DIR/artifacts"
   LIB_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/material-dynamic-table"
   DEMO_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/lib-demo"
   DOCKER_IMAGE_NAME: "$CI_REGISTRY_IMAGE/mdt-lib-demo"
@@ -43,7 +42,6 @@ build_lib:
   script:
     - npm run build-lib
   artifacts:
-    name: "mdt-lib"
     paths:
       - $LIB_OUTPUT_PATH
   dependencies:
@@ -54,7 +52,6 @@ build_demo:
   script:
     - npm run build
   artifacts:
-    name: "mdt-demo"
     paths:
       - $DEMO_OUTPUT_PATH
   dependencies:
