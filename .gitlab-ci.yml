@@ -37,25 +37,17 @@ dependencies:
     - changes:
       - package-lock.json
 
-build_lib:
+build:
   stage: build
   script:
     - npm run build-lib
-  artifacts:
-    paths:
-      - $LIB_OUTPUT_PATH
-  dependencies:
-    - dependencies
-
-build_demo:
-  stage: build
-  script:
     - npm run build
   artifacts:
     paths:
+      - $LIB_OUTPUT_PATH
       - $DEMO_OUTPUT_PATH
   dependencies:
-    - build_lib
+    - dependencies
 
 publish:
   stage: publish
