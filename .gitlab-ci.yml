@@ -16,7 +16,7 @@ variables:
   DOCKER_IMAGE_NAME: "$CI_REGISTRY_IMAGE/mdt-lib-demo"
 
 default:
-  image: trion/ng-cli:latest
+  image: trion/ng-cli:11.2.12
   tags:
     - docker
   cache:
