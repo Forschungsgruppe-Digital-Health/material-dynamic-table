@@ -24,7 +24,6 @@
     "@angular/platform-browser": "^11.2.14",
     "@angular/platform-browser-dynamic": "^11.2.14",
     "@angular/router": "^11.2.14",
-    "@tud-fgdh/material-dynamic-table": "file:dist/material-dynamic-table",
     "moment": "^2.29.4",
     "rxjs": "^6.5.4",
     "zone.js": "^0.10.3"
