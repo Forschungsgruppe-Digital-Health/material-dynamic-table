@@ -1,5 +1,4 @@
 stages:
-  - prepare
   - build
   - publish
   - deploy
@@ -20,30 +19,12 @@ default:
   tags:
     - docker
   cache:
-    - key:
+    key:
       files:
         - package-lock.json
-      paths:
+    paths:
         - node_modules
-      policy: pull
-
-dependencies:
-  stage: prepare
-  cache:
-    - key:
-        paths:
-          - .npm
-        when: on_success
-    - key:
-        files: package-lock.json
-        paths:
-          - node_modules
-        when: on_success
-  script:
-    - npm ci --cache .npm --prefer-offline
-  rules:
-    - changes:
-        - package-lock.json
+    policy: pull
 
 build_lib:
   stage: build
