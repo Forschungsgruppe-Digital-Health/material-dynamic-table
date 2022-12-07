@@ -39,8 +39,9 @@ dependencies:
 build:
   stage: build
   script:
-    - npm run build-lib
-    - npm run build
+    - npm run build-ci
+  after_script:
+    - cp $DEMO_OUTPUT_PATH/index.html $DEMO_OUTPUT_PATH/404.html
   artifacts:
     paths:
       - $LIB_OUTPUT_PATH

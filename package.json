@@ -4,12 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --source-map --verbose",
+    "build": "ng build",
+    "build-ci": "npm run build-lib && ng build --source-map --base-ref /material-dynamic-table/",
+    "build-lib": "ng build --prod material-dynamic-table && npm run copy",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "copy": "cp README.md dist/material-dynamic-table",
-    "build-lib": "ng build --prod material-dynamic-table && npm run copy",
     "postinstall": "ngcc"
   },
   "private": true,
