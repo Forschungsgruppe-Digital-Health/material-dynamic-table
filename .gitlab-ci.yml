@@ -1,0 +1,87 @@
+stages:
+  - dependencies
+  - build
+  - publish
+  - deploy
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+variables:
+  PROJECT_PATH: "$CI_PROJECT_DIR"
+  OUTPUT_PATH: "$CI_PROJECT_DIR/artifacts"
+  LIB_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/material-dynamic-table"
+  DEMO_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/lib-demo"
+  DOCKER_IMAGE_NAME: "$CI_REGISTRY_IMAGE/mdt-lib-demo"
+
+default:
+  image: trion/ng-cli:11.2.12
+  tags:
+    - docker
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+        - node_modules
+    policy: pull
+
+dependencies:
+  stage: dependencies
+  cache:
+    - { key: $CI_JOB_NAME, paths: [ .npm/ ], when: on_success, policy: pull-push }
+    - { key: { files: [ package-lock.json ] }, paths: [ node_modules/ ], when: on_success, policy: pull-push }
+  script:
+    - npm ci --cache .npm --prefer-offline
+  rules:
+    - changes:
+      - package-lock.json
+
+build_lib:
+  stage: build
+  script:
+    - npm run build-lib
+  artifacts:
+    name: "mdt-lib"
+    paths:
+      - $LIB_OUTPUT_PATH
+  dependencies:
+    - dependencies
+
+build_demo:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    name: "mdt-demo"
+    paths:
+      - $DEMO_OUTPUT_PATH
+  dependencies:
+    - build_lib
+
+publish:
+  stage: publish
+  tags:
+    - shell
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd $DEMO_OUTPUT_PATH
+  script:
+    - docker build --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  dependencies:
+    - build_demo
+
+pages:
+  stage: deploy
+  script:
+    - mv $DEMO_OUTPUT_PATH $PROJECT_PATH/public
+  artifacts:
+    paths:
+      - public
+  dependencies:
+    - build_demo
+  environment:
+    name: stage
+    url: https://tud-fgdh.gp.hrz.tu-chemnitz.de/material-dynamic-table
