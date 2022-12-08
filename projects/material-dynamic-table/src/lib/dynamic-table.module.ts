@@ -32,50 +32,44 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MomentCellComponent} from './table-cell/cell-types/moment-cell.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    LayoutModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTooltipModule,
-    MatButtonModule
-  ],
-  declarations: [
-    DynamicTableComponent,
-    DynamicTableResetFilterIconDirective,
-    DynamicTableSetColumnFilterIconDirective,
-    TableCellComponent,
-    CellDirective,
-    TextCellComponent,
-    DateCellComponent,
-    MomentCellComponent
-  ],
-  exports: [
-    DynamicTableComponent,
-    DynamicTableResetFilterIconDirective,
-    DynamicTableSetColumnFilterIconDirective
-  ],
-  entryComponents: [
-    TextCellComponent,
-    DateCellComponent,
-    MomentCellComponent
-  ],
-  providers: [
-    CellService,
-    ColumnFilterService,
-    {
-      provide: MatPaginatorIntl,
-      useClass: DynamicTableControlsIntl,
-
-    },
-    {
-      provide: DynamicTableControlsIntl,
-      useClass: DynamicTableControlsIntl,
-    }
-  ]
+    imports: [
+        CommonModule,
+        LayoutModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatIconModule,
+        MatDialogModule,
+        MatTooltipModule,
+        MatButtonModule
+    ],
+    declarations: [
+        DynamicTableComponent,
+        DynamicTableResetFilterIconDirective,
+        DynamicTableSetColumnFilterIconDirective,
+        TableCellComponent,
+        CellDirective,
+        TextCellComponent,
+        DateCellComponent,
+        MomentCellComponent
+    ],
+    exports: [
+        DynamicTableComponent,
+        DynamicTableResetFilterIconDirective,
+        DynamicTableSetColumnFilterIconDirective
+    ],
+    providers: [
+        CellService,
+        ColumnFilterService,
+        {
+            provide: MatPaginatorIntl,
+            useClass: DynamicTableControlsIntl,
+        },
+        {
+            provide: DynamicTableControlsIntl,
+            useClass: DynamicTableControlsIntl,
+        }
+    ]
 })
 export class DynamicTableModule {
   constructor(private readonly cellService: CellService) {

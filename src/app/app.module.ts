@@ -20,33 +20,28 @@ import { TextFilterComponent } from './filters/text-filter/text-filter.component
 import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    OptionsCellComponent,
-    TextFilterComponent,
-    DateFilterComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    DynamicTableModule,
-    FormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatDialogModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatMenuModule,
-    MatIconModule,
-    MatPaginatorModule
-  ],
-  entryComponents: [
-    OptionsCellComponent,
-    TextFilterComponent,
-    DateFilterComponent
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        OptionsCellComponent,
+        TextFilterComponent,
+        DateFilterComponent
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        DynamicTableModule,
+        FormsModule,
+        MatButtonModule,
+        MatInputModule,
+        MatDialogModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatMenuModule,
+        MatIconModule,
+        MatPaginatorModule
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(private readonly cellService: CellService, private readonly columnFilterService: ColumnFilterService) {

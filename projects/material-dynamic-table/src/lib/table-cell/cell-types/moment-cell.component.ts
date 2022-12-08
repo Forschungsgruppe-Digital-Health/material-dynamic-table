@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {CellComponent} from './cell.component';
 import {ColumnConfig} from '../../column-config.model';
-import * as moment from 'moment';
+// @ts-ignore
+import moment from 'moment';
 
 @Component({
   selector: 'mdt-moment-cell',
@@ -10,7 +11,7 @@ import * as moment from 'moment';
 export class MomentCellComponent implements CellComponent, OnInit {
 
   @Input() column: ColumnConfig;
-  @Input() row: object;
+  @Input() row: any;
 
   sourceFormat: string;
   targetFormat: string;
