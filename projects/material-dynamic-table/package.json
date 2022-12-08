@@ -1,6 +1,6 @@
 {
   "name": "@tud-fgdh/material-dynamic-table",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "license": "MIT",
   "author": "Marcin Suty",
   "description": "Dynamic table component for angular built on top of angular material table. It offers sorting, pagination, filtering per column and the ability to specify content types and components used for displaying them.",
@@ -23,10 +23,10 @@
     "@tud-fgdh:registry": "https://gitlab.hrz.tu-chemnitz.de/api/v4/projects/14978/packages/npm/"
   },
   "peerDependencies": {
-    "@angular/cdk": "^13.3.9",
-    "@angular/common": "^13.3.12",
-    "@angular/core": "^13.3.12",
-    "@angular/material": "^13.3.9",
+    "@angular/cdk": "^14.2.7",
+    "@angular/common": "^14.2.12",
+    "@angular/core": "^14.2.12",
+    "@angular/material": "^14.2.7",
     "moment": "^2.29.4"
   },
   "dependencies": {
