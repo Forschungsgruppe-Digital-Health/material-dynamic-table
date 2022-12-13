@@ -23,10 +23,10 @@
     "@tud-fgdh:registry": "https://gitlab.hrz.tu-chemnitz.de/api/v4/projects/14978/packages/npm/"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.2.7",
-    "@angular/common": "^14.2.12",
-    "@angular/core": "^14.2.12",
-    "@angular/material": "^14.2.7",
+    "@angular/cdk": "^14.2.5",
+    "@angular/common": "^14.2.6",
+    "@angular/core": "^14.2.6",
+    "@angular/material": "^14.2.5",
     "moment": "^2.29.4"
   },
   "dependencies": {
