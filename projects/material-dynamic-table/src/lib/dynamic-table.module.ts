@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { LayoutModule } from '@angular/cdk/layout';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +19,8 @@ import {
   DynamicTableResetFilterIconDirective,
   DynamicTableSetColumnFilterIconDirective
 } from './dynamic-table.component';
+import { DateFilterComponent } from './filters/date-filter/date-filter.component';
+import { TextFilterComponent } from './filters/text-filter/text-filter.component';
 import { CellService } from './table-cell/cell-types/cell.service';
 import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
 import { DateCellComponent } from './table-cell/cell-types/date-cell.component';
@@ -36,6 +40,7 @@ export { CellDirective, CellService, ColumnFilterService };
 @NgModule({
     imports: [
         CommonModule,
+        FormsModule,
         LayoutModule,
         MatTableModule,
         MatSortModule,
@@ -45,7 +50,8 @@ export { CellDirective, CellService, ColumnFilterService };
         MatTooltipModule,
         MatButtonModule,
         MatFormFieldModule,
-        MatInputModule
+        MatInputModule,
+        MatDatepickerModule
     ],
     declarations: [
         DynamicTableComponent,
@@ -55,7 +61,9 @@ export { CellDirective, CellService, ColumnFilterService };
         CellDirective,
         TextCellComponent,
         DateCellComponent,
-        MomentCellComponent
+        MomentCellComponent,
+        DateFilterComponent,
+        TextFilterComponent
     ],
     exports: [
         DynamicTableComponent,
@@ -76,9 +84,14 @@ export { CellDirective, CellService, ColumnFilterService };
     ]
 })
 export class DynamicTableModule {
-  constructor(private readonly cellService: CellService) {
+  constructor(
+    private readonly cellService: CellService,
+    private readonly columnFilterService: ColumnFilterService
+  ) {
     cellService.registerCell('string', TextCellComponent);
     cellService.registerCell('date', DateCellComponent);
     cellService.registerCell('moment', MomentCellComponent);
+    columnFilterService.registerFilter('string', TextFilterComponent);
+    columnFilterService.registerFilter('date', DateFilterComponent);
   }
 }

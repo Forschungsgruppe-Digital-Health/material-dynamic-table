@@ -4,12 +4,17 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ColumnConfig, ControlsPosition, DynamicTableComponent, DynamicTableControlsIntl } from 'material-dynamic-table';
+import {
+  ColumnConfig,
+  ControlsPosition,
+  DateFilter,
+  DynamicTableComponent,
+  DynamicTableControlsIntl,
+  FilteredDataSource,
+  TextFilter
+} from 'material-dynamic-table';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
-import { FilteredDataSource } from './data-source/filtered-data-source';
-import { DateFilter } from './filters/date-filter/date-filter.model';
-import { TextFilter } from './filters/text-filter/text-filter.model';
 import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
 import { Product } from './product';
 

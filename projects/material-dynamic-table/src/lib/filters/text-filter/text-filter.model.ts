@@ -1,5 +1,5 @@
 import { TableFilter } from '../../data-source/table-filter';
-import { FilterDescription } from 'material-dynamic-table';
+import { FilterDescription } from '../../filter-description';
 
 export class TextFilter implements TableFilter, FilterDescription {
     value: string;
@@ -7,12 +7,12 @@ export class TextFilter implements TableFilter, FilterDescription {
     public constructor(private readonly column: string) {
         this.value = '';
     }
-    
+
     getFilter(): object {
         const filter = {};
 
         filter[this.column] = { contains: this.value };
-        
+
         return filter;
     }
 
@@ -21,6 +21,6 @@ export class TextFilter implements TableFilter, FilterDescription {
             return null;
         }
 
-        return `contains '${this.value}'`;        
+        return `contains '${this.value}'`;
     }
 }

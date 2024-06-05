@@ -1,30 +1,25 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule} from '@angular/material/paginator';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
+import { CellService, DynamicTableModule } from 'material-dynamic-table';
 import { AppComponent } from './app.component';
-import { CellService, ColumnFilterService, DynamicTableModule } from 'material-dynamic-table';
-import { DateFilterComponent } from './filters/date-filter/date-filter.component';
-import { TextFilterComponent } from './filters/text-filter/text-filter.component';
 import { OptionsCellComponent } from './cells/options-cell/options-cell.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        OptionsCellComponent,
-        TextFilterComponent,
-        DateFilterComponent
+        OptionsCellComponent
     ],
     imports: [
         BrowserModule,
@@ -35,7 +30,6 @@ import { OptionsCellComponent } from './cells/options-cell/options-cell.componen
         MatButtonModule,
         MatInputModule,
         MatDialogModule,
-        MatDatepickerModule,
         MatNativeDateModule,
         MatMenuModule,
         MatIconModule,
@@ -44,9 +38,7 @@ import { OptionsCellComponent } from './cells/options-cell/options-cell.componen
     bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(private readonly cellService: CellService, private readonly columnFilterService: ColumnFilterService) {
+  constructor(private readonly cellService: CellService) {
     cellService.registerCell('options', OptionsCellComponent);
-    columnFilterService.registerFilter('string', TextFilterComponent);
-    columnFilterService.registerFilter('date', DateFilterComponent);
   }
 }

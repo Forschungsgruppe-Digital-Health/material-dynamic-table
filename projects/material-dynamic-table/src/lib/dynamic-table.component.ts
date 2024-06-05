@@ -253,7 +253,6 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   search(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
     if (searchValue) {
-      console.log(searchValue.trim().toLowerCase());
       this.dataSource.filter = searchValue.trim().toLowerCase();
     }
   }

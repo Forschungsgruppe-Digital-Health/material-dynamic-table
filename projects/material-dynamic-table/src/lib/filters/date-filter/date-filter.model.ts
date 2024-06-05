@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { TableFilter } from '../../data-source/table-filter';
-import { FilterDescription } from 'material-dynamic-table';
+import { FilterDescription } from '../../filter-description';
 
 export class DateFilter implements TableFilter, FilterDescription {
     fromDate: Date;
@@ -8,10 +8,10 @@ export class DateFilter implements TableFilter, FilterDescription {
 
     public constructor(private readonly column: string) {
     }
-    
+
     getFilter(): object {
         const filter = {};
-        
+
         if (this.fromDate && this.toDate) {
             filter[this.column] = { ge: this.fromDate, le: this.toDate };
         } else if (this.fromDate) {
@@ -39,6 +39,6 @@ export class DateFilter implements TableFilter, FilterDescription {
             return `is before ${formatDate(this.toDate)}`;
         } else {
             return null;
-        }        
+        }
     }
 }
