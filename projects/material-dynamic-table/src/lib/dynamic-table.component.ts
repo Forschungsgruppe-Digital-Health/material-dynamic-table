@@ -10,18 +10,18 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import {MatSort, SortDirection} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, SortDirection } from '@angular/material/sort';
 
-import {DataSource} from '@angular/cdk/table';
-import {ColumnConfig} from './column-config.model';
-import {ColumnFilter} from './column-filter.model';
-import {ControlsPosition} from './controls-position.model';
-import {ColumnFilterService} from './table-cell/cell-types/column-filter.service';
-import {DynamicTableControlsIntl} from './dynamic-table-controls-intl';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {Observable, of, Subject} from 'rxjs';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatTableDataSource } from '@angular/material/table';
+import { Observable, Subject, of } from 'rxjs';
+import { ColumnConfig } from './column-config.model';
+import { ColumnFilter } from './column-filter.model';
+import { ControlsPosition } from './controls-position.model';
+import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
+import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
 
 @Directive({
   selector: 'ng-template[mdtSetColumnFilterIcon]'
@@ -43,14 +43,16 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   @Input() caption: string;
   @Input() columns: ColumnConfig[] | Observable<ColumnConfig[]>;
   @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
-  @Input() dataSource: DataSource<any>;
+  @Input() dataSource: MatTableDataSource<any>;
+  @Input() paginator: MatPaginator;
   @Input() pageSize = 20;
   @Input() pageSizeOptions = [20, 50, 100];
+  @Input() searchFieldPlaceholder = "Search term";
   @Input() showFirstLastButton = false;
   @Input() showFilters = true;
+  @Input() showSearch = true;
   @Input() sortDirection: SortDirection = 'asc';
   @Input() stickyHeader = false;
-  @Input() paginator: MatPaginator;
 
   @Output() rowClick = new EventEmitter<any>();
   @Output() breakpointChanges: Observable<{ name: string, mediaQuery: string}[]>;
@@ -246,5 +248,13 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
 
   onRowClick(row: any) {
     this.rowClick.next(row);
+  }
+
+  search(event: Event) {
+    const searchValue = (event.target as HTMLInputElement).value;
+    if (searchValue) {
+      console.log(searchValue.trim().toLowerCase());
+      this.dataSource.filter = searchValue.trim().toLowerCase();
+    }
   }
 }

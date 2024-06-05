@@ -19,6 +19,7 @@
                      [controlsPosition]="controlsPosition"
                      [dataSource]="dataSource"
                      [showFirstLastButton]="true"
+                     [showSearch]="showSearch"
                      [stickyHeader]="true"
                      [pageSize]="2"
                      [pageSizeOptions]="[2, 4, 6, 8]"
@@ -37,6 +38,7 @@
 </div>
 
 <div class="buttons">
+  <button mat-button (click)="toggleShowSearch()">{{showSearch ? 'Hide' : 'Show'}} search</button>
   <button mat-button (click)="toggleShowFilters()">{{showFilters ? 'Hide' : 'Show'}} filters</button>
   <button mat-button [disabled]="!showFilters" (click)="clearFilters()">Clear filters</button>
   <button mat-button [disabled]="!showFilters" (click)="setFilter()">Set filter</button>

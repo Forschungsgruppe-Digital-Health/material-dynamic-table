@@ -15,7 +15,15 @@ export class FilteredDataSource<T> extends MatTableDataSource<T> {
      */
     filterPredicate = (data: T): boolean => {
         if (!this._filters || !this._filters.length) {
-            return true;
+          if (data && super.filter) {
+            const stringifiedData = Object.values(data)
+              .map(v => (typeof v !== "string") ? new String(v) : v)
+              .join().trim().toLowerCase();
+            const searchString = super.filter.trim().toLowerCase();
+            return stringifiedData.includes(searchString);
+          }
+
+          return false;
         }
 
         const result = this._filters.reduce((visible, tableFilter) => {
@@ -36,13 +44,13 @@ export class FilteredDataSource<T> extends MatTableDataSource<T> {
         return result;
     }
 
-    private matchesFilter(filterForColumn: any, dataForColumn: any): boolean {        
+    private matchesFilter(filterForColumn: any, dataForColumn: any): boolean {
 
         if (filterForColumn.contains && dataForColumn.indexOf(filterForColumn.contains) !== -1) {
             return true;
         }
-        
-        if (filterForColumn.le && filterForColumn.ge) {                    
+
+        if (filterForColumn.le && filterForColumn.ge) {
             if (dataForColumn.getTime() >= filterForColumn.ge.getTime() && dataForColumn.getTime() <= filterForColumn.le.getTime()) {
                 return true;
             }

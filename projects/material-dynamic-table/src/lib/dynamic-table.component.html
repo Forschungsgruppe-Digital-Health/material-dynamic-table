@@ -1,6 +1,14 @@
-<ng-container *ngIf="controlsPosition === controlsPositions.top">
-  <ng-container *ngTemplateOutlet="mdtControls"></ng-container>
-</ng-container>
+<div class="mdt-container-before">
+  <div class="mdt-search" [hidden]="!showSearch">
+    <mat-form-field appearence="standard">
+      <input matInput (keyup)="search($event)" [placeholder]="searchFieldPlaceholder" #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <ng-container *ngIf="controlsPosition === controlsPositions.top">
+    <ng-container *ngTemplateOutlet="mdtControls"></ng-container>
+  </ng-container>
+</div>
 <table mat-table
        matSort
        matSortDirection="{{sortDirection}}"
@@ -39,8 +47,8 @@
 
 
 <ng-template #mdtControls>
-  <div class="mdt-controls-container" [hidden]="!isUsingInternalPaginator()">
-    <div class="mdt-control">
+  <div class="mdt-container-after">
+    <div class="mdt-actions">
       <button mat-icon-button
               matTooltip="{{dynamicTableControlsIntl.resetFilterLabel}}"
               [hidden]="!showFilters"
@@ -51,10 +59,12 @@
         <ng-content select="ng-template[mdtResetFilterIcon]"></ng-content>
       </button>
     </div>
-    <mat-paginator [pageSize]="pageSize"
-                   [pageSizeOptions]="pageSizeOptions"
-                   [showFirstLastButtons]="showFirstLastButton">
-    </mat-paginator>
+    <div class="mdt-paginator" [hidden]="!isUsingInternalPaginator()">
+      <mat-paginator [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     [showFirstLastButtons]="showFirstLastButton">
+      </mat-paginator>
+    </div>
   </div>
 </ng-template>
 
