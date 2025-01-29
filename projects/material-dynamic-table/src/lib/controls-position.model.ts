@@ -1,4 +1,4 @@
-export const enum ControlsPosition {
+export enum ControlsPosition {
   BOTTOM,
   TOP
 }
