@@ -151,7 +151,7 @@ export class AppComponent implements AfterViewInit {
 
   locale = new BehaviorSubject('en');
   title = 'material-dynamic-table-demo';
-  controlsPosition = ControlsPosition.BOTTOM;
+  controlsPosition = ControlsPosition.TOP;
   columns = new BehaviorSubject(largerDeviceColumnConfig);
   showFilters = true;
   showSearch = true;

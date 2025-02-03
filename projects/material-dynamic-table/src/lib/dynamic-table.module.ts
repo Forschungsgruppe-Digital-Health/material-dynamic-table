@@ -28,6 +28,8 @@ import { MomentCellComponent } from './table-cell/cell-types/moment-cell.compone
 import { TextCellComponent } from './table-cell/cell-types/text-cell.component';
 import { CellDirective } from './table-cell/cell.directive';
 import { TableCellComponent } from './table-cell/table-cell.component';
+import {MatSelectModule} from '@angular/material/select'; 
+import {MatChipsModule} from '@angular/material/chips'; 
 
 export { ColumnConfig } from './column-config.model';
 export { ColumnFilter } from './column-filter.model';
@@ -51,7 +53,9 @@ export { CellDirective, CellService, ColumnFilterService };
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        MatSelectModule,
+        MatChipsModule
     ],
     declarations: [
         DynamicTableComponent,

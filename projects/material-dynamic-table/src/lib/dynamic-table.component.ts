@@ -71,6 +71,9 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   };
   preparedColumns: ColumnConfig[];
   displayedColumns: string[];
+  searchValue: string = '';
+  selectedColumn: string;
+  activeFilters: { column: string, value: string }[] = [];
 
   private _appliedFilters: { [key: string]: any; };
   private _breakpointChangesSubject: Subject<{ name: string, mediaQuery: string }[]>;
@@ -98,6 +101,34 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     if (this.columns instanceof Array) {
       this.columns = of(this.columns);
     }
+
+    //Handles global search and column filters
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      try {
+        const activeFilters = JSON.parse(filter);
+        return activeFilters.every((f: any) => {
+          if (f.column === 'all') {
+            //Search across all properties
+            return Object.values(data)
+              .join(' ')
+              .toLowerCase()
+              .includes(f.value.toLowerCase());
+          } else {
+            //Search only in the specified column
+            const cellValue = data[f.column];
+            return cellValue
+              ? cellValue.toString().toLowerCase().includes(f.value.toLowerCase())
+              : false;
+          }
+        });
+      } catch (e) {
+        //If no JSON is available, global search across all columns
+        return Object.values(data)
+          .join(' ')
+          .toLowerCase()
+          .includes(filter);
+      }
+    };
 
     this.columns.subscribe(columns => {
       this.preparedColumns = columns
@@ -250,10 +281,43 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     this.rowClick.next(row);
   }
 
+  //wird durch addFilter() und updateFilter() ersetzt
   search(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
     if (searchValue) {
       this.dataSource.filter = searchValue.trim().toLowerCase();
     }
   }
+
+  //chip-based filter
+  addFilter() {
+    if (this.searchValue) {
+      const chipColumn = this.selectedColumn ? this.selectedColumn : 'all';
+      this.activeFilters.push({
+        column: chipColumn,
+        value: this.searchValue
+      });
+      //clear search input
+      this.searchValue = '';
+      this.updateFilter();
+    }
+  }
+
+  removeFilter(filterToRemove: any) {
+    this.activeFilters = this.activeFilters.filter(
+      filter => filter !== filterToRemove
+    );
+    this.updateFilter();
+  }
+
+  //Updates DataSource filters based on active chips
+  updateFilter() {
+    if (this.activeFilters.length > 0) {
+      this.dataSource.filter = JSON.stringify(this.activeFilters);
+    } else {
+      //If no chips exist, the global search is used
+      this.dataSource.filter = this.searchValue.trim().toLowerCase();
+    }
+  }
+  
 }

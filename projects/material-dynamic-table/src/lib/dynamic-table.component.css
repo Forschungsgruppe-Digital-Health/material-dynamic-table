@@ -49,3 +49,18 @@ th .mat-icon.mat-default:hover,
 [hidden] {
   display: none;
 }
+
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+mat-form-field {
+  flex: 1;
+}
+
+mat-chip-list {
+  margin-bottom: 1rem;
+}
