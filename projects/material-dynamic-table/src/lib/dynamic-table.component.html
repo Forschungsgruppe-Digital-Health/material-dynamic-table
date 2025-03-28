@@ -1,45 +1,48 @@
-<div class="mdt-container-before">
-  <div class="mdt-search" [hidden]="!showSearch">
-    <div class="filter-container">
-      <mat-form-field appearance="standard">
-        <input matInput 
-               (keyup)="updateFilter()"
-               (keyup.enter)="addFilter()"
-               [(ngModel)]="searchValue"
-               [placeholder]="searchFieldPlaceholder">
-      </mat-form-field>
-      
-      <mat-form-field appearance="standard">
-        <mat-label>Spalte</mat-label>
-        <mat-select [(value)]="selectedColumn">
-          <!-- Globale Option als Preset -->
-          <mat-option [value]="'all'">Alle Spalten</mat-option>
-          <mat-option *ngFor="let column of preparedColumns" 
-                      [value]="column.name"
-                      [disabled]="!canFilter(column)">
-            {{ column.displayName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-icon-button (click)="addFilter()">
-        <mat-icon>add</mat-icon>
-      </button>
-    </div>
-
-    <mat-chip-list aria-label="Filter chips">
-      <mat-chip *ngFor="let chip of activeFilters" 
-                (removed)="removeFilter(chip)">
-        {{ chip.column }}: {{ chip.value }}
-        <mat-icon matChipRemove>cancel</mat-icon>
-      </mat-chip>
-    </mat-chip-list>
-
+<div class="filter-container">
+  <div class="search-field">
+    <mat-form-field appearance="standard">
+      <input matInput 
+             (keyup)="chipSearchToggle === chipSearchToggles.disable ? search($event) : updateFilter()"
+             (keyup.enter)="chipSearchToggle === chipSearchToggles.enable ? addFilter() : null"
+             [(ngModel)]="searchValue"
+             [placeholder]="searchFieldPlaceholder">
+    </mat-form-field>
   </div>
+
+  <!-- Dropdown und Add-Button nur, wenn Chip-Suche aktiviert ist -->
+  <ng-container *ngIf="chipSearchToggle === chipSearchToggles.enable">
+    <mat-form-field appearance="standard">
+      <mat-label>Spalte</mat-label>
+      <mat-select [(value)]="selectedColumn">
+        <!-- Globale Option als Preset -->
+        <mat-option [value]="'all'">Alle Spalten</mat-option>
+        <mat-option *ngFor="let column of preparedColumns" 
+                    [value]="column.name"
+                    [disabled]="!canFilter(column)">
+          {{ column.displayName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button (click)="addFilter()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </ng-container>
+</div>
+
+    <!-- Chip-Liste nur bei aktivierter Chip-Suche -->
+    <ng-container *ngIf="chipSearchToggle === chipSearchToggles.enable">
+      <mat-chip-list aria-label="Filter chips">
+        <mat-chip *ngFor="let chip of activeFilters" (removed)="removeFilter(chip)">
+          {{ chip.column }}: {{ chip.value }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+    </ng-container>
+
   <ng-container *ngIf="controlsPosition === controlsPositions.top">
     <ng-container *ngTemplateOutlet="mdtControls"></ng-container>
   </ng-container>
-</div>
+
 <table mat-table
        matSort
        matSortDirection="{{sortDirection}}"

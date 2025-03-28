@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { LayoutModule } from '@angular/cdk/layout';
@@ -30,6 +30,7 @@ import { CellDirective } from './table-cell/cell.directive';
 import { TableCellComponent } from './table-cell/table-cell.component';
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatChipsModule} from '@angular/material/chips'; 
+import { SearchStrategyService } from './chip-search/search-strategy.service';
 
 export { ColumnConfig } from './column-config.model';
 export { ColumnFilter } from './column-filter.model';
@@ -76,6 +77,8 @@ export { CellDirective, CellService, ColumnFilterService };
     ],
     providers: [
         CellService,
+        SearchStrategyService,
+        DatePipe,
         ColumnFilterService,
         {
             provide: MatPaginatorIntl,
@@ -97,5 +100,6 @@ export class DynamicTableModule {
     cellService.registerCell('moment', MomentCellComponent);
     columnFilterService.registerFilter('string', TextFilterComponent);
     columnFilterService.registerFilter('date', DateFilterComponent);
+    columnFilterService.registerFilter('moment', DateFilterComponent);
   }
 }

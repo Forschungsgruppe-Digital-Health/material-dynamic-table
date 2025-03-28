@@ -7,6 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {
   ColumnConfig,
   ControlsPosition,
+  ChipSearchToggle,
   DateFilter,
   DynamicTableComponent,
   DynamicTableControlsIntl,
@@ -151,7 +152,8 @@ export class AppComponent implements AfterViewInit {
 
   locale = new BehaviorSubject('en');
   title = 'material-dynamic-table-demo';
-  controlsPosition = ControlsPosition.TOP;
+  controlsPosition = ControlsPosition.BOTTOM;
+  chipSearchToggle = ChipSearchToggle.ENABLE;
   columns = new BehaviorSubject(largerDeviceColumnConfig);
   showFilters = true;
   showSearch = true;

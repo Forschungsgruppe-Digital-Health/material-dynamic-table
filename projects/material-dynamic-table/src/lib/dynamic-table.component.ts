@@ -20,8 +20,10 @@ import { Observable, Subject, of } from 'rxjs';
 import { ColumnConfig } from './column-config.model';
 import { ColumnFilter } from './column-filter.model';
 import { ControlsPosition } from './controls-position.model';
+import { ChipSearchToggle } from './chip-search/chipsearch-toggle.model';
 import { DynamicTableControlsIntl } from './dynamic-table-controls-intl';
 import { ColumnFilterService } from './table-cell/cell-types/column-filter.service';
+import { SearchStrategyService } from './chip-search/search-strategy.service';
 
 @Directive({
   selector: 'ng-template[mdtSetColumnFilterIcon]'
@@ -36,13 +38,14 @@ export class DynamicTableResetFilterIconDirective {}
 @Component({
   selector: 'mdt-dynamic-table',
   templateUrl: './dynamic-table.component.html',
-  styleUrls: ['./dynamic-table.component.css']
+  styleUrls: ['./dynamic-table.component.css', './chip-search/chip-search.component.css'],
 })
 export class DynamicTableComponent implements OnInit, AfterViewInit {
 
   @Input() caption: string;
   @Input() columns: ColumnConfig[] | Observable<ColumnConfig[]>;
   @Input() controlsPosition: ControlsPosition = ControlsPosition.BOTTOM;
+  @Input() chipSearchToggle: ChipSearchToggle = ChipSearchToggle.ENABLE;
   @Input() dataSource: MatTableDataSource<any>;
   @Input() paginator: MatPaginator;
   @Input() pageSize = 20;
@@ -69,11 +72,17 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     bottom: ControlsPosition.BOTTOM,
     top: ControlsPosition.TOP
   };
+
+  chipSearchToggles = {
+    enable: ChipSearchToggle.ENABLE,
+    disable: ChipSearchToggle.DISABLE
+  };
+
   preparedColumns: ColumnConfig[];
   displayedColumns: string[];
   searchValue: string = '';
   selectedColumn: string;
-  activeFilters: { column: string, value: string }[] = [];
+  activeFilters: { column: string, value: string, type?: string }[] = [];
 
   private _appliedFilters: { [key: string]: any; };
   private _breakpointChangesSubject: Subject<{ name: string, mediaQuery: string }[]>;
@@ -82,7 +91,8 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     private readonly breakpointObserver: BreakpointObserver,
     private readonly columnFilterService: ColumnFilterService,
     private readonly dialog: MatDialog,
-    readonly dynamicTableControlsIntl: DynamicTableControlsIntl
+    readonly dynamicTableControlsIntl: DynamicTableControlsIntl,
+    private readonly searchStrategyService: SearchStrategyService
   ) {
     this._appliedFilters = {};
     this._breakpointChangesSubject = new Subject<{ name: string, mediaQuery: string }[]>();
@@ -103,33 +113,36 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     }
 
     //Handles global search and column filters
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      try {
-        const activeFilters = JSON.parse(filter);
-        return activeFilters.every((f: any) => {
-          if (f.column === 'all') {
-            //Search across all properties
-            return Object.values(data)
-              .join(' ')
-              .toLowerCase()
-              .includes(f.value.toLowerCase());
-          } else {
-            //Search only in the specified column
-            const cellValue = data[f.column];
-            return cellValue
-              ? cellValue.toString().toLowerCase().includes(f.value.toLowerCase())
-              : false;
-          }
-        });
-      } catch (e) {
-        //If no JSON is available, global search across all columns
-        return Object.values(data)
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      if (this.chipSearchToggle === ChipSearchToggle.DISABLE || !filter.trim().startsWith('[')) {
+        const dataString = Object.values(data)
+          .map(val => (val != null ? String(val) : ''))
           .join(' ')
-          .toLowerCase()
-          .includes(filter);
+          .toLowerCase();
+        return dataString.includes(filter.toLowerCase());
+      } else {
+        let activeFilters: any[];
+        try {
+          activeFilters = typeof filter === 'string' ? JSON.parse(filter) : filter;
+        } catch (e) {
+          console.warn('[FilterPredicate] JSON.parse failed. Using fallback filter for:', filter);
+          const dataString = Object.values(data)
+            .map(val => (val != null ? String(val) : ''))
+            .join(' ')
+            .toLowerCase();
+          return dataString.includes(filter.toLowerCase());
+        }
+        
+        return activeFilters.every((f: any) => {
+          const cellValue = data[f.column];
+          const cellType = f.type || 'text';
+          const strategy = this.searchStrategyService.getStrategy(cellType);
+          console.log("Matching Strategy:", strategy);
+          return strategy.match(cellValue, f);
+        });
       }
-    };
-
+    };    
+    
     this.columns.subscribe(columns => {
       this.preparedColumns = columns
         // Assign index based column name if non is given
@@ -272,9 +285,11 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   }
 
   private getColumnByName(columnName: string): ColumnConfig | undefined {
-    return this.preparedColumns.find(c =>
+    const found = this.preparedColumns.find(c =>
       (c.name ? c.name.toLowerCase() : c.name) === (columnName ? columnName.toLowerCase() : columnName)
     );
+    console.log(`getColumnByName: Searching for '${columnName}' found:`, found);
+    return found;
   }
 
   onRowClick(row: any) {
@@ -285,24 +300,34 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   search(event: Event) {
     const searchValue = (event.target as HTMLInputElement).value;
     if (searchValue) {
-      this.dataSource.filter = searchValue.trim().toLowerCase();
+      const searchVal = searchValue.trim().toLowerCase();
+      this.dataSource.filter = searchVal;
+      console.log('Live search applied:', searchVal);
     }
   }
 
   //chip-based filter
   addFilter() {
-    if (this.searchValue) {
-      const chipColumn = this.selectedColumn ? this.selectedColumn : 'all';
+    if (this.chipSearchToggle === ChipSearchToggle.DISABLE) {
+      return;
+    }
+    if (this.searchValue && this.selectedColumn) {
+      const column = this.getColumnByName(this.selectedColumn);
+      if (!column) {
+        console.warn(`Column ${this.selectedColumn} not found.`);
+        return;
+      }
+      
       this.activeFilters.push({
-        column: chipColumn,
+        column: column.name,
         value: this.searchValue
       });
-      //clear search input
+      
       this.searchValue = '';
       this.updateFilter();
     }
   }
-
+  
   removeFilter(filterToRemove: any) {
     this.activeFilters = this.activeFilters.filter(
       filter => filter !== filterToRemove
@@ -310,14 +335,38 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
     this.updateFilter();
   }
 
-  //Updates DataSource filters based on active chips
+
+  // In updateFilter() wird nun zunächst aus dem aktiven Filterobjekt der Zelltyp ermittelt,
+  // bevor als Fallback der Wert aus der ColumnConfig genommen wird:
   updateFilter() {
-    if (this.activeFilters.length > 0) {
-      this.dataSource.filter = JSON.stringify(this.activeFilters);
-    } else {
-      //If no chips exist, the global search is used
-      this.dataSource.filter = this.searchValue.trim().toLowerCase();
-    }
+    const filters = this.activeFilters.map(filter => {
+      const column = this.getColumnByName(filter.column);
+      if (!column) return null;
+        const mergedFilter = { 
+        ...filter, 
+        ...column.options, 
+        type: column.type || 'text' 
+      };
+      const cellType = column.type || 'text';      
+      console.log(`Applying filter for column "${mergedFilter.column}" with cellType "${mergedFilter.type}" and value "${mergedFilter.value}"`);
+      console.log("Column.options:", column.options);
+      const strategy = this.searchStrategyService.getStrategy(mergedFilter.type);
+      if (!strategy) {
+        console.error(`No search strategy found for cell type "${mergedFilter.type}"`);
+        return null;
+      }
+      
+      try {
+        const appliedFilter = strategy.apply(mergedFilter);
+        console.log('Applied Filter:', appliedFilter);
+        return appliedFilter;
+      } catch (error) {
+        console.error(`Error applying filter for column "${mergedFilter.column}":`, error);
+        return null;
+      }
+    }).filter(f => f !== null);
+    
+    console.log('Final filters applied:', filters);
+    this.dataSource.filter = JSON.stringify(filters);
   }
-  
 }

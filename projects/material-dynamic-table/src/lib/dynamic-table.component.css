@@ -15,6 +15,8 @@
 
 .mdt-search {
   padding: 0 24px;
+  width: auto;
+  margin: 0 10px;
 }
 
 .mdt-container-after {
@@ -22,9 +24,7 @@
 }
 
 table,
-.mdt-search,
-.mdt-container-after,
-.mdt-search > * {
+.mdt-container-after {
   width: 100%;
 }
 
@@ -33,7 +33,7 @@ table,
 }
 
 .mat-paginator-container {
-  flex-wrap: nowrap;;
+  flex-wrap: nowrap;
 }
 
 th .mat-icon.mat-default,
@@ -57,10 +57,17 @@ th .mat-icon.mat-default:hover,
   margin-bottom: 1rem;
 }
 
+/* Für die mat-form-field-Elemente in der Filterzeile */
 mat-form-field {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0 10px;
+}
+
+.search-field {
   flex: 1;
 }
 
-mat-chip-list {
-  margin-bottom: 1rem;
+.search-field mat-form-field {
+  width: 100%;
 }

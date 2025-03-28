@@ -37,10 +37,12 @@ export class MomentCellComponent implements CellComponent, OnInit {
   }
 
   getLocalizedMoment() {
-    return moment(
+    const formatted = moment(
       this.row[this.column.name],
       this.sourceFormat,
       moment.locale()
     ).format(this.targetFormat);
+    //console.log('ReceivedOn cell value:', formatted);
+    return formatted;
   }
 }
