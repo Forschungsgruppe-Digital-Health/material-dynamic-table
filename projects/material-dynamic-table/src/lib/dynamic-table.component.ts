@@ -38,7 +38,7 @@ export class DynamicTableResetFilterIconDirective {}
 @Component({
   selector: 'mdt-dynamic-table',
   templateUrl: './dynamic-table.component.html',
-  styleUrls: ['./dynamic-table.component.css', './chip-search/chip-search.component.css'],
+  styleUrls: ['./dynamic-table.component.css'],
 })
 export class DynamicTableComponent implements OnInit, AfterViewInit {
 
@@ -114,6 +114,9 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
 
     //Handles global search and column filters
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      if (!filter || !data) {
+        return true;
+      }
       if (this.chipSearchToggle === ChipSearchToggle.DISABLE || !filter.trim().startsWith('[')) {
         const dataString = Object.values(data)
           .map(val => (val != null ? String(val) : ''))
