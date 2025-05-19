@@ -31,6 +31,8 @@ import { TableCellComponent } from './table-cell/table-cell.component';
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatChipsModule} from '@angular/material/chips'; 
 import { SearchStrategyService } from './chip-search/search-strategy.service';
+import { FhirResourceCellComponent } from './fhir/fhir-resource-cell/fhir-resource-cell.component';
+import { FhirHelpersPipe } from './fhir/pipe/fhir-helpers.pipe';
 
 export { ColumnConfig } from './column-config.model';
 export { ColumnFilter } from './column-filter.model';
@@ -68,12 +70,14 @@ export { CellDirective, CellService, ColumnFilterService };
         DateCellComponent,
         MomentCellComponent,
         DateFilterComponent,
-        TextFilterComponent
+        TextFilterComponent,
+        FhirResourceCellComponent,
+        FhirHelpersPipe,
     ],
     exports: [
         DynamicTableComponent,
         DynamicTableResetFilterIconDirective,
-        DynamicTableSetColumnFilterIconDirective
+        DynamicTableSetColumnFilterIconDirective,
     ],
     providers: [
         CellService,
@@ -98,8 +102,10 @@ export class DynamicTableModule {
     cellService.registerCell('string', TextCellComponent);
     cellService.registerCell('date', DateCellComponent);
     cellService.registerCell('moment', MomentCellComponent);
+    cellService.registerCell('fhir', FhirResourceCellComponent);
     columnFilterService.registerFilter('string', TextFilterComponent);
     columnFilterService.registerFilter('date', DateFilterComponent);
     columnFilterService.registerFilter('moment', DateFilterComponent);
+    columnFilterService.registerFilter('fhir', TextFilterComponent);
   }
 }

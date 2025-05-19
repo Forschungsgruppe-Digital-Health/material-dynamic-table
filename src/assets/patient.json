@@ -1,0 +1,14 @@
+{
+    "resourceType": "Patient",
+    "name": [
+        {
+            "use": "official",
+            "family": "Doe",
+            "given": [
+                "John",
+                "Michael"
+            ]
+        }
+    ],
+    "birthDate": "1980-07-23"
+}

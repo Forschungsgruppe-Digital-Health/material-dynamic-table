@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { FhirPath } from 'fhir';
 
 export interface SearchStrategy {
     apply(filter: any): any;
@@ -117,5 +118,31 @@ export class MomentSearchStrategy implements SearchStrategy {
     }
     
     return false;
+  }
+}
+
+export class FhirSearchStrategy implements SearchStrategy {
+  apply(filter: any): any { // filter ist hier mergedFilter aus updateFilter
+    return {
+      column: filter.column,
+      value: String(filter.value).toLowerCase().trim(),
+      fhirPath: filter.fhirPath, // Wichtig: fhirPath beibehalten!
+      type: 'fhir' // Sicherstellen, dass der Typ korrekt ist
+    };
+  }
+
+  match(cellValue: any, filter: any): boolean {
+    // Diese cellValue wird von filterPredicate (siehe Schritt 3) bereits ausgewertet sein.
+    // filter.value ist der Suchbegriff, bereits in Kleinbuchstaben.
+    if (cellValue == null) {
+      return false;
+    }
+
+    const arr: string[] = Array.isArray(cellValue)
+      ? cellValue.map(v => String(v).toLowerCase()) // Werte aus fhirPath hier in Kleinbuchstaben umwandeln
+      : [String(cellValue).toLowerCase()];
+    const term = filter.value; // Ist bereits in Kleinbuchstaben durch apply()
+
+    return arr.some(text => text.includes(term));
   }
 }

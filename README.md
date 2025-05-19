@@ -181,6 +181,46 @@ This displays plain string value for property defined under `name` in ColumnConf
 This is the default type used if there is no type specified for the data type.
 ###### date
 This type will format property from `ColumnConfig.name` as date. It can take additional parameter in `ColumnConfig.options` - `dateFormat`, which specifies what date format should be used (default is 'short')
+###### fhir
+The `fhir` cell type lets you render and format FHIR R4 resources using FHIRPath expressions and custom formatters.
+
+Key Features:
+- **FHIRPath lookup**: Extracts data via `options.fhirPath` (e.g. `"name.given"`).
+- **Formatter**: `options.formatter(rawValue)` to transform the raw result (e.g. format dates with Moment).
+- **Display callback**: `options.display(results, formatter)` for custom rendering (e.g. join arrays).
+
+Component Logic:
+```ts
+getValue(): string {
+  const opt = this.column.options || {};
+
+  // 1) Evaluate FHIRPath
+  const results = opt.fhirPath
+    ? fhirpath.evaluate(this.row, opt.fhirPath)
+    : [];
+
+  // 2) Pick first or array
+  const raw = Array.isArray(results) ? results[0] : results;
+
+  // 3) Apply formatter or default stringify
+  const formatted = opt.formatter
+    ? opt.formatter(raw)
+    : String(raw);
+
+  // 4) If a display callback is provided, use it
+  //    display(results, formatter, delimiter?)
+  if (opt.display) {
+    // pass a custom delimiter if defined in options
+    return opt.display(
+      results,
+      (v: any) => String(v),
+      opt.delimiter ?? ', '
+    );
+  }
+
+  return formatted;
+}
+```
 
 #### Adding additional cell types
 New cell types can be defined by adding a component, inheriting from CellComponent
@@ -274,3 +314,51 @@ To make use of filters you need to have data source that can handle them. See `F
 
 Filters can have a description that is displayed when the filter is applied. To set the description for the filter the filter model should have a method getDescription that returns a string.
 Implement interface 'FilterDescription' for your filter model to have the description displayed.
+
+
+#### Chipsearch (Optional)
+This library includes an optional chip‑based search overlay. It allows users to build filter chips for individual columns or a global search across all columns.
+
+### Usage
+
+1. **Enable** chip search via input:  
+   ```html
+   [chipSearchToggle]="ChipSearchToggle.ENABLE"
+2. A dropdown appears to select a column (or all for global search).
+3. Enter a text value and press Enter or click Add.
+4. Chips appear below the table; removing a chip clears its filter.
+
+## Registering Custom Search Strategies
+
+The `SearchStrategyService` lets you plug in new filter behaviors by registering your own implementations of the `SearchStrategy` interface.
+By default, theres an strategy for each default celltype(text, date, moment, fhir)
+
+### 1. Implement the `SearchStrategy` Interface
+
+Create a class that implements the following interface:
+
+```ts
+export interface SearchStrategy {
+  /**  
+   * Transforms a filter chip into whatever internal structure your predicate needs  
+   */
+  apply(filter: FilterChip): any;
+
+  /**  
+   * Tests a single cell value against the filter chip  
+   */
+  match(cellValue: any, filter: FilterChip): boolean;
+}
+
+```
+
+In your column definitions, reference your new strategy key:
+
+```ts
+import { ColumnConfig } from 'material-dynamic-table';
+
+export const columns: ColumnConfig[] = [
+  { name: 'status', header: 'Status', type: 'myText' },
+  // ...
+];
+```

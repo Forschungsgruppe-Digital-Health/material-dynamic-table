@@ -6,12 +6,6 @@
   <img width="200" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
 </div>
 
-<div style="margin: 2em 0;" *ngIf="breakpointChanges">
-  <h4>Breakpoint changes</h4>
-  <ng-container *ngFor="let change of breakpointChanges">
-    <em>Name:</em> {{ change.name }}, <em>Media query:</em> {{ change.mediaQuery }}<br>
-  </ng-container>
-</div>
 
 <div class="mat-elevation-z2 table-container">
   <mdt-dynamic-table [caption]="title"
@@ -20,6 +14,7 @@
                      [dataSource]="dataSource"
                      [showFirstLastButton]="true"
                      [showSearch]="showSearch"
+                     [locale]="locale | async"
                      [stickyHeader]="true"
                      [pageSize]="2"
                      [pageSizeOptions]="[2, 4, 6, 8]"
@@ -44,6 +39,9 @@
   <button mat-button [disabled]="!showFilters" (click)="setFilter()">Set filter</button>
   <button mat-button [disabled]="!showFilters" (click)="toggleIcons()">Toggle icons</button>
   <button mat-button (click)="toggleLocale()">Change moment locale (currently set to '{{locale | async}}')</button>
+  <button mat-button (click)="primary" (click)="switchTables()">Switch Table</button>
+
+
 </div>
 
 <div style="position: absolute; bottom: 0">

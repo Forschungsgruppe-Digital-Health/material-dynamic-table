@@ -1,7 +1,7 @@
 :root {
     --chip-margin-bottom: 1rem;
-    --chip-bg: #1976d2;
-    --chip-text-color: #fff;
+    --chip-bg: #f30000;
+    --chip-text-color: #000000;
     --chip-border-radius: 16px;
 }
 

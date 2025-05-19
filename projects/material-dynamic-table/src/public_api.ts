@@ -9,4 +9,5 @@ export * from './lib/dynamic-table.component';
 export * from './lib/dynamic-table.module';
 export * from './lib/filters/date-filter/date-filter.model';
 export * from './lib/filters/text-filter/text-filter.model';
-export * from './lib/chip-search/chipsearch-toggle.model'
+export * from './lib/chip-search/chipsearch-toggle.model';
+export * from './lib/fhir/fhir-resource-cell/fhir-resource-cell-utils';

@@ -1,6 +1,7 @@
 import { Breakpoints } from '@angular/cdk/layout';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { HttpClient } from '@angular/common/http';
 
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,12 +13,16 @@ import {
   DynamicTableComponent,
   DynamicTableControlsIntl,
   FilteredDataSource,
-  TextFilter
+  TextFilter,
+  join,
+  first
 } from 'material-dynamic-table';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { GermanDynamicTableControlsIntl } from './german-dynamic-table-controls-intl';
 import { Product } from './product';
+import { Patient } from './patient';
+import { FormControl } from '@angular/forms';
 
 const smallerDeviceColumnConfig: ColumnConfig[] = [
   {
@@ -77,6 +82,39 @@ const largerDeviceColumnConfig: ColumnConfig[] = [
     type: 'options',
     sticky: 'end',
     sort: false
+  },
+];
+
+const patientColumnConfig: ColumnConfig[] = [
+  {
+    name: 'firstName',
+    displayName: 'FHIR Example - Vorname',
+    type: 'fhir',
+    options: {
+      fhirPath: 'name.given',
+      display: (results, formatter) => {
+        return join(results, formatter, '/') //for custom delimiter
+      }
+    }
+  },
+  {
+    name: 'familyName',
+    displayName: 'FHIR Example - Nachname',
+    type: 'fhir',
+    options: {
+      fhirPath: 'name.family',
+      formatter: (value: any): string => value,
+      display: join //standard delimiter is ", "
+    }
+  },
+  {
+    name: 'birthdate',
+    displayName: 'FHIR Example - Geburtsdatum',
+    type: 'fhir',
+    options: {
+      fhirPath: 'birthDate',
+      formatter: (value: any): string => moment(value).format('LL'), //display: (dateString: string): string => moment(dateString).from(„YYYY-MM-DD“).format(„LLL“)
+    }
   }
 ];
 
@@ -85,7 +123,7 @@ const PRODUCT_DATA: Product[] = [
     product: 'Mouse',
     description: 'Fast and wireless',
     receivedOn: new Date('2018-01-02T11:05:53.212Z'),
-    created: new Date('2015-04-22T18:12:21.111Z')
+    created: new Date('2015-04-22T18:12:21.111Z'),
   },
   {
     product: 'Keyboard',
@@ -154,18 +192,24 @@ export class AppComponent implements AfterViewInit {
   title = 'material-dynamic-table-demo';
   controlsPosition = ControlsPosition.BOTTOM;
   chipSearchToggle = ChipSearchToggle.ENABLE;
-  columns = new BehaviorSubject(largerDeviceColumnConfig);
+  columns = new BehaviorSubject(patientColumnConfig);
   showFilters = true;
   showSearch = true;
   showCustomIcons = true;
 
-  dataSource = new FilteredDataSource<Product>(PRODUCT_DATA);
+  tableControl = new FormControl<'patient' | 'product'>('patient');
+  delimiterControl = new FormControl(', ');
+
+  productDataSource = new FilteredDataSource<Product>(PRODUCT_DATA);
+  patientDataSource = new FilteredDataSource<Patient>([]);
+  dataSource: FilteredDataSource<any>;
 
   breakpointChanges: { name: string, mediaQuery: string}[];
 
   constructor(
     private _iconRegistry: MatIconRegistry,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private http: HttpClient
   ) {
     this._iconRegistry.addSvgIconInNamespace(
       'custom',
@@ -177,27 +221,54 @@ export class AppComponent implements AfterViewInit {
       'hatch-filter',
       this._sanitizer.bypassSecurityTrustResourceUrl('assets/icons/hatch-filter.svg')
     );
+    this.dataSource = this.productDataSource;
+    this.columns.next(largerDeviceColumnConfig);
+
+    this.http.get<Patient>('assets/patient.json').subscribe(data => {
+      this.patientDataSource.data = [data];
+    });
   }
 
   ngAfterViewInit(): void {
     this.dynamicTable.breakpointChanges.subscribe(breakpointChanges => {
       this.breakpointChanges = breakpointChanges;
-
-      if (breakpointChanges.find(breakpointChange => breakpointChange.mediaQuery === Breakpoints.Small)) {
-        this.columns.next(smallerDeviceColumnConfig);
+  
+      if (this.tableControl.value === 'patient') {
+        this.columns.next(patientColumnConfig);
+      } else {
+        if (breakpointChanges.find(b => b.mediaQuery === Breakpoints.Small)) {
+          this.columns.next(smallerDeviceColumnConfig);
+        }
+        if (breakpointChanges.find(b => b.mediaQuery === Breakpoints.Medium)) {
+          this.columns.next(largerDeviceColumnConfig);
+        }
       }
-
-      if (breakpointChanges.find(breakpointChange => breakpointChange.mediaQuery === Breakpoints.Medium)) {
-        this.columns.next(largerDeviceColumnConfig);
-      }
+  
       this.locale.next(moment.locale());
     });
-
+  
+    this.tableControl.valueChanges.subscribe(value => {
+      this.dataSource = value === 'patient'
+        ? this.patientDataSource
+        : this.productDataSource;
+  
+      if (value === 'patient') {
+        this.columns.next(patientColumnConfig);
+      } else {
+        if (this.breakpointChanges?.find(b => b.mediaQuery === Breakpoints.Small)) {
+          this.columns.next(smallerDeviceColumnConfig);
+        } else {
+          this.columns.next(largerDeviceColumnConfig);
+        }
+      }
+    });
+  
     this.locale.subscribe(locale => {
       moment.locale(locale);
     });
   }
-
+       
+  
   clearFilters() {
     this.dynamicTable.clearFilters();
   }
@@ -238,5 +309,25 @@ export class AppComponent implements AfterViewInit {
 
   toggleLocale() {
     this.locale.next(moment.locale() === 'en' ? 'de' : 'en');
+  }
+
+  currentTable: 'product' | 'patient' = 'product';
+
+  switchTables() {
+    if (this.currentTable === 'product') {
+      this.dataSource = this.patientDataSource;
+      this.columns.next(patientColumnConfig);
+      this.currentTable = 'patient';
+    } else {
+      this.dataSource = this.productDataSource;
+      this.columns.next(largerDeviceColumnConfig);
+      this.currentTable = 'product';
+    }
+
+    // Filter- und Such-UI zurücksetzen
+    this.dynamicTable.searchValue = '';
+    (this.dynamicTable.dataSource as any).filter = '';
+    this.dynamicTable.activeFilters = [];
+    (this.dynamicTable.dataSource as any).filters = [];
   }
 }
