@@ -15,7 +15,6 @@
                      [dataSource]="dataSource"
                      [showFirstLastButton]="true"
                      [showSearch]="showSearch"
-                     [locale]="locale | async"
                      [stickyHeader]="true"
                      [pageSize]="2"
                      [pageSizeOptions]="[2, 4, 6, 8]"
@@ -40,7 +39,7 @@
   <button mat-button [disabled]="!showFilters" (click)="setFilter()">Set filter</button>
   <button mat-button [disabled]="!showFilters" (click)="toggleIcons()">Toggle icons</button>
   <button mat-button (click)="toggleLocale()">Change moment locale (currently set to '{{locale | async}}')</button>
-  <button mat-button (click)="primary" (click)="switchTables()">Switch Table</button>
+  <button mat-button (click)="switchTables()">Switch Table</button>
 
 
 </div>
