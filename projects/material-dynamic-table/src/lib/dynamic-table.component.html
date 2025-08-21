@@ -1,8 +1,9 @@
-<div class="filter-container">
+<div class="filter-container" *ngIf="showSearch">
   <div class="search-field">
     <mat-form-field appearance="standard">
       <input matInput 
-      (keyup)="chipSearchToggle === chipSearchToggles.disable && search($event)" 
+      (keyup)="chipSearchToggle === chipSearchToggles.disable && search($event)"
+      (keyup.enter)="chipSearchToggle === chipSearchToggles.enable && addFilter()"
       [(ngModel)]="searchValue"
       [placeholder]="searchFieldPlaceholder">
     </mat-form-field>
@@ -21,7 +22,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-icon-button (click)="addFilter(); updateFilter()">
+    <button mat-icon-button (click)="addFilter()">
       <mat-icon>add</mat-icon>
     </button>
   </ng-container>
