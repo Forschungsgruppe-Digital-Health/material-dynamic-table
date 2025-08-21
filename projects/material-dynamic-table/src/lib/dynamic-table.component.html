@@ -15,7 +15,7 @@
       <mat-label>Spalte</mat-label>
       <mat-select [(value)]="selectedColumn">
         <!-- Globale Option als Preset -->
-        <mat-option *ngFor="let column of preparedColumns" 
+        <mat-option *ngFor="let column of filterableColumns" 
                     [value]="column.name"
                     [disabled]="!canFilter(column)">
           {{ column.displayName }}

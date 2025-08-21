@@ -96,6 +96,7 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
   };
 
   preparedColumns: ColumnConfig[];
+  filterableColumns: ColumnConfig[];
   displayedColumns: string[];
   searchValue: string = '';
   selectedColumn: string;
@@ -180,6 +181,9 @@ export class DynamicTableComponent implements OnInit, AfterViewInit {
           column.name = column.name || 'col' + index;
           return column;
         });
+
+      // Create a list of columns that can be selected for filtering.
+      this.filterableColumns = this.preparedColumns.filter(column => column.displayName);
 
       // Set column to display
       this.displayedColumns = this.preparedColumns.map((column, index) => column.name);

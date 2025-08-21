@@ -196,10 +196,6 @@ export class AppComponent implements AfterViewInit {
   showFilters = true;
   showSearch = true;
   showCustomIcons = true;
-
-  tableControl = new FormControl<'patient' | 'product'>('patient');
-  delimiterControl = new FormControl(', ');
-
   productDataSource = new FilteredDataSource<Product>(PRODUCT_DATA);
   patientDataSource = new FilteredDataSource<Patient>([]);
   dataSource: FilteredDataSource<any>;
@@ -233,34 +229,20 @@ export class AppComponent implements AfterViewInit {
     this.dynamicTable.breakpointChanges.subscribe(breakpointChanges => {
       this.breakpointChanges = breakpointChanges;
   
-      if (this.tableControl.value === 'patient') {
+      if (this.currentTable === 'patient') {
         this.columns.next(patientColumnConfig);
       } else {
-        if (breakpointChanges.find(b => b.mediaQuery === Breakpoints.Small)) {
-          this.columns.next(smallerDeviceColumnConfig);
-        }
-        if (breakpointChanges.find(b => b.mediaQuery === Breakpoints.Medium)) {
-          this.columns.next(largerDeviceColumnConfig);
-        }
-      }
-  
-      this.locale.next(moment.locale());
-    });
-  
-    this.tableControl.valueChanges.subscribe(value => {
-      this.dataSource = value === 'patient'
-        ? this.patientDataSource
-        : this.productDataSource;
-  
-      if (value === 'patient') {
-        this.columns.next(patientColumnConfig);
-      } else {
-        if (this.breakpointChanges?.find(b => b.mediaQuery === Breakpoints.Small)) {
+        const isSmall = breakpointChanges.find(
+          b => b.mediaQuery === Breakpoints.XSmall || b.mediaQuery === Breakpoints.Small
+        );
+        if (isSmall) {
           this.columns.next(smallerDeviceColumnConfig);
         } else {
           this.columns.next(largerDeviceColumnConfig);
         }
       }
+  
+      this.locale.next(moment.locale());
     });
   
     this.locale.subscribe(locale => {
