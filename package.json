@@ -1,5 +1,5 @@
 {
-  "name": "lib-demo",
+  "name": "@Forschungsgruppe-Digital-Health/material-dynamic-table",
   "version": "14.1.0",
   "scripts": {
     "ng": "ng",
@@ -13,7 +13,10 @@
     "copy": "cp README.md dist/material-dynamic-table",
     "postinstall": "ngcc"
   },
-  "private": true,
+  "private": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
   "dependencies": {
     "@angular/animations": "^14.2.6",
     "@angular/cdk": "^14.2.5",
