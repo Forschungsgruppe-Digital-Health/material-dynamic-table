@@ -16,7 +16,7 @@
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  }
+  },
   "dependencies": {
     "@angular/animations": "^14.2.6",
     "@angular/cdk": "^14.2.5",
